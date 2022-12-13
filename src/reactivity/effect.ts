@@ -1,13 +1,14 @@
 class ReactiveEffect {
   private _fn: any;
-  constructor(fn,public scheduler?) {
+  public scheduler?:any
+  constructor(fn, scheduler) {
     this._fn = fn;
+    this.scheduler=scheduler
   }
   run() {
     activeEffect = this;
-    let res=this._fn();
     //实现调用run方法的时候需要得到fn的返回值
-    return res;
+    return this._fn();
   }
 }
 //map 对象就像是一个对象，但是这个对象里面的键可以是任何类型的属性
@@ -47,6 +48,7 @@ export function trigger(target, key) {
   }
 }
 
+//当前的target key 值被 get 的时候 的函数的自定义包装
 let activeEffect;
 export function effect(fn,options:any={}) {
   let _effect = new ReactiveEffect(fn,options.scheduler);
