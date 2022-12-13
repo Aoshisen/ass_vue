@@ -1,6 +1,6 @@
 class ReactiveEffect {
   private _fn: any;
-  constructor(fn) {
+  constructor(fn,public scheduler?) {
     this._fn = fn;
   }
   run() {
@@ -33,16 +33,23 @@ export function track(target, key) {
   //然后把 target key 对应起来
   //target=> key => dep
 }
+
 export function trigger(target, key) {
   let depsMap = targetMap.get(target);
   let dep = depsMap.get(key);
   for (const effect of dep) {
-    effect.run();
+    if(effect.scheduler){
+      effect.scheduler()
+    }
+    else{
+      effect.run();
+    }
   }
 }
+
 let activeEffect;
-export function effect(fn) {
-  let _effect = new ReactiveEffect(fn);
+export function effect(fn,options:any={}) {
+  let _effect = new ReactiveEffect(fn,options.scheduler);
   _effect.run();
   //以当前这个effect的实例作为run 方法的this的指向
   return _effect.run.bind(_effect);
