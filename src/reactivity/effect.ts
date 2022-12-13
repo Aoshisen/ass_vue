@@ -5,9 +5,9 @@ class ReactiveEffect {
   }
   run() {
     activeEffect = this;
-    this._fn();
+    let res=this._fn();
     //实现调用run方法的时候需要得到fn的返回值
-    return this._fn();
+    return res;
   }
 }
 //map 对象就像是一个对象，但是这个对象里面的键可以是任何类型的属性

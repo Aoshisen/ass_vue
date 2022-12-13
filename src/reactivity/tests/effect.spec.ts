@@ -22,7 +22,7 @@ describe("effect", () => {
     expect(nextAge).toBe(12);
   });
 
-  it.skip("should return runner when call effect",()=>{
+  it("should return runner when call effect",()=>{
     //我们调用effect（fn）之后是会返回一个function的runner ，当调用这个function(runner) 的时候，就会再执行一下这个effect 函数，并且这个时候会返回effect 函数执行的值的
     let foo =10;
     //希望effect 函数执行之后返回的是一个runner函数
