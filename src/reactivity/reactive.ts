@@ -1,34 +1,13 @@
-import { track,trigger } from "./effect";
-//导出一个函数，传入的参数是一个没有处理过的对象
+import { mutableHandlers, readonlyHandlers } from "./baseHandler";
+
 export function reactive(raw) {
-  return new Proxy(raw, {
-    get(target, key) {
-      // return target.key
-      //通过Reflect.get 拿到当前target的值
-      const res = Reflect.get(target, key);
-      // 依赖收集
-      track(target,key)
-      return res;
-    },
-    set(target, key, value) {
-      // return target.key=value
-      const res = Reflect.set(target, key, value);
-      // 触发依赖
-      trigger(target,key)
-      return res;
-    },
-  });
+  return createActionObject(raw, mutableHandlers);
 }
 
-export function readonly(raw){
-  return new Proxy(raw, {
-    get(target, key) {
-      const res = Reflect.get(target, key);
-      return res;
-    },
-    set(target, key, value) {
-      console.warn(`target ${target} is readonly, ${key.toString()} can not be set to ${value}`)
-      return true;
-    },
-  });
+export function readonly(raw) {
+  return createActionObject(raw, readonlyHandlers);
+}
+
+function createActionObject(raw, baseHandlers) {
+  return new Proxy(raw, baseHandlers);
 }
