@@ -19,3 +19,16 @@ export function reactive(raw) {
     },
   });
 }
+
+export function readonly(raw){
+  return new Proxy(raw, {
+    get(target, key) {
+      const res = Reflect.get(target, key);
+      return res;
+    },
+    set(target, key, value) {
+      console.warn(`target ${target} is readonly, ${key.toString()} can not be set to ${value}`)
+      return true;
+    },
+  });
+}
