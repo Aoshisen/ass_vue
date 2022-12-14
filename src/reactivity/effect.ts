@@ -29,7 +29,8 @@ class ReactiveEffect {
 }
 
 function cleanupEffect(effect: any) {
-  effect.deps.forEach((dep: any) => dep.delete(effect));
+  //每一个dep都是一个set对象
+  effect.deps.forEach((dep: any) =>dep.delete(effect));
 }
 
 //map 对象就像是一个对象，但是这个对象里面的键可以是任何类型的属性
@@ -56,6 +57,15 @@ export function track(target, key) {
   if (!activeEffect) return;
   dep.add(activeEffect);
   activeEffect.deps.push(dep);
+
+  //得到了类似于下面这种结构
+  // 1. target 通过target 存储自身
+  // 2. target 通过target 拿到自身
+  // 3. target key 通过target的key值存储在target 里面
+  // 4. target key 通过target拿到targetMap 然后通过targetMap.get(key)来拿到自身
+  // 5. target key 可以通过add 方法添加自身到指定的地方，以及对自身的属性再进行操作；
+  // 6. 相当于建立了一个对应的关系，连了个线，各自的数据储存在各自的位置，现在这个map数据结构只是把内存地址相互关联了一下
+
   //因为依赖的项都是不重复的函数，那么可以用set这个数据结构来存储
   // let dep =new Set()
   //然后把 target key 对应起来
