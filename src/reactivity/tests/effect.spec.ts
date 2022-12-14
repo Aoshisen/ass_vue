@@ -1,5 +1,5 @@
 import { reactive } from "../reactive";
-import { effect } from "../effect";
+import { effect, stop } from "../effect";
 describe("effect", () => {
   it("happy path", () => {
     //创建一个响应式对象
@@ -59,16 +59,49 @@ describe("effect", () => {
       }
     );
     //scheduler 就是effect 的第二个参数，在初始化的时候不会被调用
-    expect(scheduler).not.toHaveBeenCalled()
+    expect(scheduler).not.toHaveBeenCalled();
     //然后第一次的时候是会被调用的，调用后dummy 就会被赋值为1
-    expect(dummy).toBe(1)
+    expect(dummy).toBe(1);
     obj.foo++;
     //当obj 改变的时候会被调用scheduler
-    expect(scheduler).toHaveBeenCalledTimes(1)
+    expect(scheduler).toHaveBeenCalledTimes(1);
     //但是这个时候不会去更新dummy的值
-    expect(dummy).toBe(1)
+    expect(dummy).toBe(1);
     //当执行run的时候才会被调用dummy
     run();
-    expect(dummy).toBe(2)
+    expect(dummy).toBe(2);
+  });
+
+  it("stop", () => {
+    // 1. effect.ts 会导出一个stop函数，当调用stop函数，并且把runner(也就是effect的返回值传递给他时),再次触发trigger 也就是触发响应式对象值得更新得时候，当前用户传递进来得依赖不会执行(就是effect包裹得函数不会执行)
+    // 2. 当再次调用runner 的时候effect包裹的函数执行
+    let dump;
+    const obj = reactive({ prop: 1 });
+    const runner = effect(() => {
+      dump = obj.prop;
+    });
+    obj.prop = 2;
+    expect(dump).toBe(2);
+    stop(runner);
+    obj.prop = 3;
+    expect(dump).toBe(2);
+
+    //stopped effect should still be manually callable
+    runner();
+    expect(dump).toBe(3);
+  });
+
+  it("onStop", () => {
+    const obj = reactive({ foo: 1 });
+    const onStop = jest.fn();
+    let dummy;
+    const runner = effect(
+      () => {
+        dummy = obj.foo;
+      },
+      { onStop }
+    );
+    stop(runner);
+    expect(onStop).toBeCalledTimes(1);
   });
 });
