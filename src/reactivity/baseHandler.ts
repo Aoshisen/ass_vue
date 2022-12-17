@@ -6,7 +6,9 @@ const readonlyGet=createGetter(true)
 function createGetter(isReadonly = false) {
   return function get(target, key) {
     const res = Reflect.get(target, key);
-    track(target, key);
+    if(!isReadonly){
+      track(target, key);
+    }
     return res;
   };
 }
@@ -18,6 +20,7 @@ function createSetter() {
     return res;
   };
 }
+
 export const mutableHandlers = {
   get,
   set,
