@@ -83,7 +83,9 @@ describe("effect", () => {
     obj.prop = 2;
     expect(dump).toBe(2);
     stop(runner);
-    obj.prop = 3;
+    // obj.prop = 3;
+    //这里会先去走get的操作，从而把清空的依赖重新收集了起来
+    obj.prop++;
     expect(dump).toBe(2);
 
     //stopped effect should still be manually callable
