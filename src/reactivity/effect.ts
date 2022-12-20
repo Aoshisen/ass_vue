@@ -1,6 +1,12 @@
 import { extend } from "./shared";
 //创建activeEffect 的实例的类
 
+//map 对象就像是一个对象，但是这个对象里面的键可以是任何类型的属性
+let targetMap = new Map();
+//当前的target key 值被 get 的时候 的函数的自定义包装
+let activeEffect;
+let shouldTrack;
+
 class ReactiveEffect {
   private _fn: any;
   public scheduler?: any;
@@ -14,7 +20,15 @@ class ReactiveEffect {
   run() {
     activeEffect = this;
     //实现调用run方法的时候需要得到fn的返回值
-    return this._fn();
+    //在这里的时候会收集依赖
+    //用shouldTrack来做区分
+    if (!this.active) {
+      return this._fn();
+    }
+    shouldTrack = true;
+    const result = this._fn();
+    shouldTrack = false;
+    return result;
   }
   stop() {
     //this就是当前active 的runner
@@ -30,15 +44,16 @@ class ReactiveEffect {
 
 function cleanupEffect(effect: any) {
   //每一个dep都是一个set对象
-  effect.deps.forEach((dep: any) =>dep.delete(effect));
+  effect.deps.forEach((dep: any) => dep.delete(effect));
+  effect.deps.length = 0;
 }
 
-//map 对象就像是一个对象，但是这个对象里面的键可以是任何类型的属性
-let targetMap = new Map();
-//当前的target key 值被 get 的时候 的函数的自定义包装
-let activeEffect;
+function isTracking() {
+  return shouldTrack && activeEffect !== undefined;
+}
 
 export function track(target, key) {
+  if (!isTracking()) return;
   //取到target 上面存的key值
   let depsMap = targetMap.get(target);
 
@@ -54,7 +69,7 @@ export function track(target, key) {
   }
   //添加当前活动的effect
   //只有当调用effect 的时候，才会生成activeEffect
-  if (!activeEffect) return;
+  if (dep.has(activeEffect)) return;
   dep.add(activeEffect);
   activeEffect.deps.push(dep);
 
