@@ -47,9 +47,11 @@ function cleanupEffect(effect: any) {
   effect.deps.forEach((dep: any) => dep.delete(effect));
   effect.deps.length = 0;
 }
+
 function isTracking() {
   return shouldTrack && activeEffect !== undefined;
 }
+
 export function track(target, key) {
   if (!isTracking()) return;
   //取到target 上面存的key值
