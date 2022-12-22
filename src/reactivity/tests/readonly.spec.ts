@@ -1,10 +1,10 @@
-import { readonly,IsReadonly } from "../reactive";
+import { readonly, isReadonly } from "../reactive";
 describe("readonly", () => {
   it("happy path", () => {
     const original = { foo: 1, bar: { baz: 2 } };
     const wrapped = readonly(original);
     //IsReadonly
-    expect(IsReadonly(wrapped)).toBe(true)
+    expect(isReadonly(wrapped)).toBe(true);
     expect(wrapped).not.toBe(original);
     expect(wrapped.foo).toBe(1);
   });
@@ -13,5 +13,12 @@ describe("readonly", () => {
     const user = readonly({ age: 10 });
     user.age = 11;
     expect(console.warn).toBeCalled();
+  });
+  it("nested readonly", () => {
+    const original = { foo: 1, bar: { baz: 2 } };
+    const wrapped = readonly(original);
+    //IsReadonly
+    expect(isReadonly(wrapped)).toBe(true)
+    expect(isReadonly(wrapped.bar)).toBe(true)
   });
 });
