@@ -1,4 +1,4 @@
-import { IsReactive, reactive } from "../reactive";
+import { isReactive, reactive } from "../reactive";
 describe("reactive", () => {
   it("happy path", () => {
     const original = { foo: 10 };
@@ -8,8 +8,19 @@ describe("reactive", () => {
     //希望响应式对象和原来的值是两个不同的引用
     expect(observer).not.toBe(original);
     //IsReactive
-    expect(IsReactive(original)).toBe(false);
+    expect(isReactive(original)).toBe(false);
 
-    expect(IsReactive(observer)).toBe(true);
+    expect(isReactive(observer)).toBe(true);
   });
+  it("nested reactive",()=>{
+    const original={
+      nested:{
+        foo:1
+      },array:[{bar:2}]
+    }
+    const observer=reactive(original)
+    expect(isReactive(observer.nested)).toBe(true)
+    expect(isReactive(observer.array)).toBe(true)
+    expect(isReactive(observer.array[0])).toBe(true)
+  })
 });
