@@ -1,4 +1,9 @@
-import { mutableHandlers, reactiveFlags, readonlyHandlers,shallowReadonlyHandlers } from "./baseHandler";
+import {
+  mutableHandlers,
+  reactiveFlags,
+  readonlyHandlers,
+  shallowReadonlyHandlers,
+} from "./baseHandler";
 export function reactive(raw) {
   return createActionObject(raw, mutableHandlers);
 }
@@ -14,10 +19,14 @@ function createActionObject(raw, baseHandlers) {
   return new Proxy(raw, baseHandlers);
 }
 
-export const isReadonly=(value:any)=>{
-  return !!value[reactiveFlags.IS_READONLY]
-}
+export const isReadonly = (value: any) => {
+  return !!value[reactiveFlags.IS_READONLY];
+};
 
-export const isReactive=(value:any)=>{
-  return !!value[reactiveFlags.IS_REACTIVE]
-}
+export const isReactive = (value: any) => {
+  return !!value[reactiveFlags.IS_REACTIVE];
+};
+
+export const isProxy = (value: any) => {
+  return isReactive(value) || isReadonly(value);
+};
