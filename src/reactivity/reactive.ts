@@ -11,10 +11,10 @@ function createActionObject(raw, baseHandlers) {
   return new Proxy(raw, baseHandlers);
 }
 
-export const IsReadonly=(value:any)=>{
+export const isReadonly=(value:any)=>{
   return !!value[reactiveFlags.IS_READONLY]
 }
 
-export const IsReactive=(value:any)=>{
+export const isReactive=(value:any)=>{
   return !!value[reactiveFlags.IS_REACTIVE]
 }
