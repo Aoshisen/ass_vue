@@ -48,7 +48,7 @@ function cleanupEffect(effect: any) {
   effect.deps.length = 0;
 }
 
-function isTracking() {
+export function isTracking() {
   return shouldTrack && activeEffect !== undefined;
 }
 
@@ -69,9 +69,7 @@ export function track(target, key) {
   }
   //添加当前活动的effect
   //只有当调用effect 的时候，才会生成activeEffect
-  if (dep.has(activeEffect)) return;
-  dep.add(activeEffect);
-  activeEffect.deps.push(dep);
+  trackEffects(dep);
 
   //得到了类似于下面这种结构
   // 1. target 通过target 存储自身
@@ -87,9 +85,19 @@ export function track(target, key) {
   //target=> key => dep
 }
 
+export function trackEffects(dep) {
+  if (dep.has(activeEffect)) return;
+  dep.add(activeEffect);
+  activeEffect.deps.push(dep);
+}
+
 export function trigger(target, key) {
   let depsMap = targetMap.get(target);
   let dep = depsMap.get(key);
+  triggerEffects(dep);
+}
+
+export function triggerEffects(dep) {
   //触发所有收集起来的effect
   for (const effect of dep) {
     if (effect.scheduler) {
