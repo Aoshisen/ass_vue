@@ -64,11 +64,12 @@ describe("ref", () => {
     expect(proxyUser.name).toBe("xiaoming")
   });
 
-  it.skip("proxyRefs set", () => {
+  it("proxyRefs set", () => {
     const user = { age: ref(10), name: "xiaoming" };
     const proxyUser=proxyRefs(user)
     expect(user.age.value).toBe(10)
     expect(proxyUser.age).toBe(10)
     expect(proxyUser.name).toBe("xiaoming")
   });
+  
 });
