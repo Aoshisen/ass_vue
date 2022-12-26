@@ -5,7 +5,7 @@ import { hasChanged, isObject } from "./shared";
 class RefImpl {
   private _value: any;
   public dep;
-  public __v_isRef=true;
+  public __v_isRef = true;
   private _rawValue: any;
 
   constructor(value) {
@@ -42,14 +42,30 @@ function convert(value) {
   return isObject(value) ? reactive(value) : value;
 }
 
-export function isRef(value){
-  return !!value.__v_isRef
+export function isRef(value) {
+  return !!value.__v_isRef;
 }
 
-export function unRef(ref){
-  return isRef(ref)?ref.value:ref;
+export function unRef(ref) {
+  return isRef(ref) ? ref.value : ref;
 }
 
 export function ref(value) {
   return new RefImpl(value);
+}
+
+export function proxyRefs(objectWithRefs) {
+  return new Proxy(objectWithRefs, {
+    get(target, key) {
+      //如果是ref的话就返回ref.value,如果不是ref的话那么就返回target.key
+      return unRef(Reflect.get(target, key));
+    },
+    set(target, key, newValue) {
+      if (isRef(target[key]) && !isRef(newValue)) {
+        return (target[key].value = newValue);
+      } else {
+        return Reflect.set(target, key, newValue);
+      }
+    },
+  });
 }
