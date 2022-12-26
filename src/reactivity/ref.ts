@@ -5,6 +5,7 @@ import { hasChanged, isObject } from "./shared";
 class RefImpl {
   private _value: any;
   public dep;
+  public __v_isRef=true;
   private _rawValue: any;
 
   constructor(value) {
@@ -39,6 +40,14 @@ function trackRefValue(ref) {
 
 function convert(value) {
   return isObject(value) ? reactive(value) : value;
+}
+
+export function isRef(value){
+  return !!value.__v_isRef
+}
+
+export function unRef(ref){
+  return isRef(ref)?ref.value:ref;
 }
 
 export function ref(value) {
