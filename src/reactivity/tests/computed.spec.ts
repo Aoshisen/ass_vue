@@ -23,6 +23,7 @@ describe("computed", () => {
     const getter = jest.fn(() => {
       return value.foo;
     });
+
     const cValue=computed(getter)
 
     //lazy
@@ -35,14 +36,15 @@ describe("computed", () => {
     expect(getter).toHaveBeenCalledTimes(1)
 
     //should not compute until needed
+    //在set 的时候会去触发依赖
     value.foo=2
     expect(getter).toHaveBeenCalledTimes(1)
 
-    // //now it should compute
+    // // //now it should compute
     expect(cValue.value).toBe(2)
     expect(getter).toHaveBeenCalledTimes(2)
 
-    // //should not compute again
+    // // //should not compute again
     cValue.value
     expect(getter).toHaveBeenCalledTimes(2)
   });

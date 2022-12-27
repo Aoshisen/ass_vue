@@ -14,12 +14,9 @@ class ComputedRefImpl {
     });
   }
   get value() {
-    //get
-    //get value dirty true
-    //当依赖的响应式对象的值发生改变的时候改变dirty false
-    //
     if (this._dirty) {
       this._dirty = false;
+      //在run 的时候会去收集依赖
       this._value = this._effect.run();
     }
     return this._value;
