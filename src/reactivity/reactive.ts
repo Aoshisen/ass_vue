@@ -4,6 +4,7 @@ import {
   readonlyHandlers,
   shallowReadonlyHandlers,
 } from "./baseHandler";
+
 export function reactive(raw) {
   return createActionObject(raw, mutableHandlers);
 }

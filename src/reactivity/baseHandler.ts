@@ -1,6 +1,6 @@
 import { track, trigger } from "./effect";
 import { reactive, readonly } from "./reactive";
-import { extend, isObject } from "./shared";
+import { extend, isObject } from "../shared";
 const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);

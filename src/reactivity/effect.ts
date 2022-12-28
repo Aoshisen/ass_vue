@@ -1,4 +1,4 @@
-import { extend } from "./shared";
+import { extend } from "../shared";
 //创建activeEffect 的实例的类
 
 //map 对象就像是一个对象，但是这个对象里面的键可以是任何类型的属性
