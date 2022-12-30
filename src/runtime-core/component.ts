@@ -1,7 +1,7 @@
 export function createComponentInstance(vNode: any) {
   const component = {
     vNode,
-    type:vNode.type
+    type: vNode.type,
   };
   return component;
 }
@@ -36,15 +36,11 @@ function handleSetupResult(instance, setupResult) {
     instance.setupState = setupResult;
   }
   //保证组件的render是一定有值的
-  finishComponentSetup(instance)
+  finishComponentSetup(instance);
 }
 
-function finishComponentSetup(instance){
-
-    const  Component=instance.type
-
-    if(Component.render){
-        instance.render=Component.render
-    }
-    
+function finishComponentSetup(instance) {
+  const Component = instance.type;
+//假设是一定有render的
+  instance.render = Component.render;
 }

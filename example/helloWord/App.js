@@ -1,3 +1,4 @@
+import { h } from "../../lib/ass-vue.es.js";
 export const App = {
   // .vue
   // <template></template>

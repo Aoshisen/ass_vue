@@ -9,7 +9,13 @@ export function render(vNode, container) {
 function patch(vNode, container) {
   //处理组件
   //
-  processComponent(vNode, container);
+  //element
+  if (typeof vNode.type === "object") {
+    console.log("component 类型");
+    processComponent(vNode, container);
+  } else {
+    console.log("element 类型");
+  }
 }
 
 function processComponent(vNode, container) {
@@ -33,7 +39,7 @@ function mountComponent(vNode, container) {
 }
 
 function setupRenderEffect(instance, container) {
-  const subTree = instance.render;
+  const subTree = instance.render();
   //subTree 就是虚拟节点树
   /* 
     vNode ->patch
