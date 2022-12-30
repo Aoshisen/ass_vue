@@ -4,7 +4,6 @@
   "main": "lib/ass-vue.cjs.js",
   "module": "lib/ass-vue.esm.js",
   "license": "MIT",
-  "type": "module",
   "devDependencies": {
     "@babel/core": "^7.20.5",
     "@babel/preset-env": "^7.20.2",
