@@ -18,9 +18,9 @@
 
 ---
 
-- [ ] 实现初始化component主流程
-- [ ] 使用rollup 打包库
-- [ ] 实现element主流程
+- [x] 实现初始化component主流程
+- [x] 使用rollup 打包库
+- [x] 实现element主流程
 - [ ] 实现组件代理对象
 - [ ] 实现shapeFlags
 - [ ] 实现注册时间功能
