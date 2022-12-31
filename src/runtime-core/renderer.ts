@@ -1,3 +1,4 @@
+import { isObject } from "../shared";
 import { createComponentInstance, setupComponent } from "./component";
 
 export function render(vNode, container) {
@@ -10,11 +11,46 @@ function patch(vNode, container) {
   //处理组件
   //
   //element
-  if (typeof vNode.type === "object") {
+  console.log(vNode);
+  if (typeof vNode.type === "string") {
+    console.log("element 类型");
+    processElement(vNode, container);
+  } else if (isObject(vNode)) {
     console.log("component 类型");
     processComponent(vNode, container);
-  } else {
-    console.log("element 类型");
+  }
+}
+
+function processElement(vNode, container) {
+  //TODO: updateElement
+  mountElement(vNode, container);
+}
+
+function mountElement(vNode, container) {
+  const { type, children, props } = vNode;
+  const el = document.createElement(type);
+  setMountElementAttribute(el, props);
+  mountChildren(children, el);
+  container.appendChild(el);
+}
+
+function setMountElementAttribute(el, attributes) {
+  for (const key in attributes) {
+    const attributeValue = attributes[key];
+    const value = Array.isArray(attributeValue)
+      ? attributeValue.join(" ")
+      : attributeValue;
+    el.setAttribute(key, value);
+  }
+}
+
+function mountChildren(children, container) {
+  if (typeof children === "string") {
+    container.textContent = children;
+  } else if (Array.isArray(children)) {
+    children.map((v) => {
+      patch(v, container);
+    });
   }
 }
 

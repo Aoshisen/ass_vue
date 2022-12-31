@@ -1,5 +1,5 @@
 //vue3
-import { createApp } from "../../lib/ass-vue.es.js";
+import { createApp } from "../../lib/ass-vue.esm.js";
 import { App } from "./App.js";
 
 const rootContainer=document.getElementById("app")
