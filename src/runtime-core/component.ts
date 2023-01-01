@@ -1,7 +1,10 @@
-export function createComponentInstance(vNode: any) {
+import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
+
+export function createComponentInstance(vnode: any) {
   const component = {
-    vNode,
-    type: vNode.type,
+    vnode,
+    type: vnode.type,
+    setupState:{},
   };
   return component;
 }
@@ -17,8 +20,12 @@ export function setupComponent(instance) {
 function setupStatefulComponent(instance) {
   //在最开始的时候很简单，去调用setup 拿到setup的返回值就可以了
   const Component = instance.type;
-
   const { setup } = Component;
+
+  //ctx
+  const proxy = new Proxy ({_:instance},PublicInstanceProxyHandlers)
+
+  instance.proxy=proxy;
 
   if (setup) {
     const setupResult = setup();
