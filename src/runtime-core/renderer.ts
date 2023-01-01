@@ -9,9 +9,6 @@ export function render(vNode, container) {
 
 function patch(vNode, container) {
   //处理组件
-  //
-  //element
-  console.log(vNode);
   if (typeof vNode.type === "string") {
     console.log("element 类型");
     processElement(vNode, container);
