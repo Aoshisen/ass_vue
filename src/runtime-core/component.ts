@@ -1,18 +1,20 @@
+import { shallowReadonly } from "../reactivity/reactive";
+import { initProps } from "./componentProps";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
 
 export function createComponentInstance(vnode: any) {
   const component = {
     vnode,
     type: vnode.type,
-    setupState:{},
+    setupState: {},
+    props: {},
   };
   return component;
 }
 
 export function setupComponent(instance) {
-  //TODO:initProps
   //TODO:initSlots
-
+  initProps(instance, instance.vnode.props);
   //初始化一个有状态的component (有状态的组件和函数组件函数组件是没有任何状态的)
   setupStatefulComponent(instance);
 }
@@ -24,12 +26,12 @@ function setupStatefulComponent(instance) {
 
   //ctx
 
-  const proxy = new Proxy ({_:instance},PublicInstanceProxyHandlers)
+  const proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
 
-  instance.proxy=proxy;
+  instance.proxy = proxy;
 
   if (setup) {
-    const setupResult = setup();
+    const setupResult = setup(shallowReadonly(instance.props));
     handleSetupResult(instance, setupResult);
   }
 }
@@ -49,6 +51,6 @@ function handleSetupResult(instance, setupResult) {
 
 function finishComponentSetup(instance) {
   const Component = instance.type;
-//假设是一定有render的
+  //假设是一定有render的
   instance.render = Component.render;
 }

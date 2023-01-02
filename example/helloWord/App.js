@@ -1,4 +1,5 @@
 import { h } from "../../lib/ass-vue.esm.js";
+import { Foo } from "./Foo.js";
 window.self = null;
 export const App = {
   // .vue
@@ -11,16 +12,17 @@ export const App = {
       "div",
       {
         id: "root",
-        class: ["red", "blue"],
+        class: ["red"],
         onClick() {
           console.log("this is app div onclick");
         },
-        onMousedown(){
+        onMousedown() {
           console.log("mouseDown,app");
-        }
+        },
       },
-      "hi" +  this.msg
-      // [h("p", { class: "red" }, "hi red"), h("p", { class: "blue" }, "hi blue")]
+      // "hi" + this.msg,
+      // [h("p", { class: "red" }, "hi red"), h("p", { class: "blue" }, "hi blue")],
+      [h("p", { class: "red" }, "hi red"), h(Foo, { count: 1 })]
     );
   },
   setup() {

@@ -45,8 +45,10 @@ function mountElement(vnode, container) {
   }
 
   if (shapeFlag & shapeFlags.TEXT_CHILDREN) {
+    console.log("text");
     el.textContent = children;
   } else if (shapeFlag & shapeFlags.ARRAY_CHILDREN) {
+    console.log("array");
     mountChildren(children, el);
   }
   container.appendChild(el);
