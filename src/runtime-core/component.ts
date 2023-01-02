@@ -23,6 +23,7 @@ function setupStatefulComponent(instance) {
   const { setup } = Component;
 
   //ctx
+
   const proxy = new Proxy ({_:instance},PublicInstanceProxyHandlers)
 
   instance.proxy=proxy;

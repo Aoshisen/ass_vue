@@ -59,29 +59,29 @@ function processComponent(vnode, container) {
   mountComponent(vnode, container);
 }
 
-function mountComponent(vnode, container) {
+function mountComponent(initialVNode, container) {
   /*
-1. 通过vnode 创建组件实例对象
+1. 通过initialVNode 创建组件实例对象
 2. 通过组件实例对象来初始化组件(component) 处理props 处理slot 处理当前组件调用setup返回出来的值
 3. 创建renderEffect 
 */
 
-  const instance = createComponentInstance(vnode);
+  const instance = createComponentInstance(initialVNode);
 
   setupComponent(instance);
 
-  setupRenderEffect(instance, vnode, container);
+  setupRenderEffect(instance, initialVNode, container);
 }
 
-function setupRenderEffect(instance, vnode, container) {
+function setupRenderEffect(instance, initialVNode, container) {
   const { proxy } = instance;
   const subTree = instance.render.call(proxy);
   //subTree 就是虚拟节点树
   /* 
-    vnode ->patch
-    vnode -> element  mountElement 
+    initialVNode ->patch
+    initialVNode -> element  mountElement 
     */
   patch(subTree, container);
   // element=> mount
-  vnode.el = subTree.el;
+  initialVNode.el = subTree.el;
 }
