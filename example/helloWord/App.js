@@ -4,7 +4,6 @@ export const App = {
   // .vue
   // <template></template>
   //render
-
   render() {
     //ui  逻辑
     window.self = this;

@@ -1,4 +1,6 @@
+import { createJsxJsxClosingFragment } from "typescript";
 import { isObject } from "../shared";
+import { shapeFlags } from "../shared/shapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 
 export function render(vnode, container) {
@@ -9,10 +11,11 @@ export function render(vnode, container) {
 
 function patch(vnode, container) {
   //处理组件
-  if (typeof vnode.type === "string") {
+  const { shapeFlag } = vnode;
+  if (shapeFlag & shapeFlags.ELEMENT) {
     console.log("element 类型");
     processElement(vnode, container);
-  } else if (isObject(vnode)) {
+  } else if (shapeFlag & shapeFlags.STATEFUL_COMPONENT) {
     console.log("component 类型");
     processComponent(vnode, container);
   }
@@ -25,12 +28,24 @@ function processElement(vnode, container) {
 
 function mountElement(vnode, container) {
   //vnode =>element  =>div
-  const { type, children, props } = vnode;
+  const { type, children, props, shapeFlag } = vnode;
   const el = document.createElement(type);
   vnode.el = el;
+
   setMountElementAttribute(el, props);
-  mountChildren(children, el);
+
+  if (shapeFlag & shapeFlags.TEXT_CHILDREN) {
+    container.textContent = children;
+  } else if (shapeFlag & shapeFlags.ARRAY_CHILDREN) {
+    mountChildren(children, container);
+  }
   container.appendChild(el);
+}
+
+function mountChildren(children, container) {
+  children.map((v) => {
+    patch(v, container);
+  });
 }
 
 function setMountElementAttribute(el, attributes) {
@@ -40,16 +55,6 @@ function setMountElementAttribute(el, attributes) {
       ? attributeValue.join(" ")
       : attributeValue;
     el.setAttribute(key, value);
-  }
-}
-
-function mountChildren(children, container) {
-  if (typeof children === "string") {
-    container.textContent = children;
-  } else if (Array.isArray(children)) {
-    children.map((v) => {
-      patch(v, container);
-    });
   }
 }
 
