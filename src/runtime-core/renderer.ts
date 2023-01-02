@@ -32,12 +32,21 @@ function mountElement(vnode, container) {
   const el = document.createElement(type);
   vnode.el = el;
 
-  setMountElementAttribute(el, props);
+  for (const key in props) {
+    const attributeValue = props[key];
+    const isOn=(eventName:string)=>/^on[A-Z]/.test(eventName)
+    if (isOn(key)) {
+      const eventName=key.slice(2).toLocaleLowerCase()
+      el.addEventListener(eventName, attributeValue);
+    }else{
+      el.setAttribute(key, attributeValue);
+    }
+  }
 
   if (shapeFlag & shapeFlags.TEXT_CHILDREN) {
-    container.textContent = children;
+    el.textContent = children;
   } else if (shapeFlag & shapeFlags.ARRAY_CHILDREN) {
-    mountChildren(children, container);
+    mountChildren(children, el);
   }
   container.appendChild(el);
 }
@@ -46,16 +55,6 @@ function mountChildren(children, container) {
   children.map((v) => {
     patch(v, container);
   });
-}
-
-function setMountElementAttribute(el, attributes) {
-  for (const key in attributes) {
-    const attributeValue = attributes[key];
-    const value = Array.isArray(attributeValue)
-      ? attributeValue.join(" ")
-      : attributeValue;
-    el.setAttribute(key, value);
-  }
 }
 
 function processComponent(vnode, container) {

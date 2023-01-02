@@ -8,7 +8,6 @@ export function createVNode(type, props?, children?) {
     el: null,
     shapeFlag: getShapeFlag(type),
   };
-  debugger
   // 处理children的flag
   if (typeof children === "string") {
     vnode.shapeFlag |= shapeFlags.TEXT_CHILDREN;

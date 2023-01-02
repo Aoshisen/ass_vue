@@ -9,8 +9,17 @@ export const App = {
     window.self = this;
     return h(
       "div",
-      { id: "root", class: ["red", "blue"] },
-      "hi" + this.msg
+      {
+        id: "root",
+        class: ["red", "blue"],
+        onClick() {
+          console.log("this is app div onclick");
+        },
+        onMousedown(){
+          console.log("mouseDown,app");
+        }
+      },
+      "hi" +  this.msg
       // [h("p", { class: "red" }, "hi red"), h("p", { class: "blue" }, "hi blue")]
     );
   },
