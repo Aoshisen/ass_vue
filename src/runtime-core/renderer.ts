@@ -1,5 +1,3 @@
-import { createJsxJsxClosingFragment } from "typescript";
-import { isObject } from "../shared";
 import { shapeFlags } from "../shared/shapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 
@@ -46,6 +44,7 @@ function mountElement(vnode, container) {
 
   if (shapeFlag & shapeFlags.TEXT_CHILDREN) {
     console.log("text");
+    
     el.textContent = children;
   } else if (shapeFlag & shapeFlags.ARRAY_CHILDREN) {
     console.log("array");
