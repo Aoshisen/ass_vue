@@ -39,7 +39,8 @@ function mountElement(vnode, container) {
       const eventName=key.slice(2).toLocaleLowerCase()
       el.addEventListener(eventName, attributeValue);
     }else{
-      el.setAttribute(key, attributeValue);
+      const _attributeValue=Array.isArray(attributeValue)?attributeValue.join(" "):attributeValue
+      el.setAttribute(key, _attributeValue);
     }
   }
 
