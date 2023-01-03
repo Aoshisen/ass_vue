@@ -13,16 +13,27 @@ export const App = {
       {
         id: "root",
         class: ["red"],
-        onClick() {
-          console.log("this is app div onclick");
-        },
-        onMousedown() {
-          console.log("mouseDown,app");
-        },
+        // onClick() {
+        //   console.log("this is app div onclick");
+        // },
+        // onMousedown() {
+        //   console.log("mouseDown,app");
+        // },
       },
       // "hi" + this.msg,
       // [h("p", { class: "red" }, "hi red"), h("p", { class: "blue" }, "hi blue")],
-      [h("p", { class: "red" }, "hi red"), h(Foo, { count: 1 })]
+      [
+        h("p", { class: "red" }, "hi red"),
+        h(Foo, {
+          count: 1,
+          onAdd(a, b) {
+            console.log("on add in app js", a, b);
+          },
+          onAddFoo(){
+            console.log("on Add foo in app js")
+          }
+        }),
+      ]
     );
   },
   setup() {

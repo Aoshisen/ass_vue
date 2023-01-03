@@ -11,10 +11,10 @@ function patch(vnode, container) {
   //处理组件
   const { shapeFlag } = vnode;
   if (shapeFlag & shapeFlags.ELEMENT) {
-    console.log("element 类型");
+    // console.log("element 类型");
     processElement(vnode, container);
   } else if (shapeFlag & shapeFlags.STATEFUL_COMPONENT) {
-    console.log("component 类型");
+    // console.log("component 类型");
     processComponent(vnode, container);
   }
 }
@@ -43,11 +43,11 @@ function mountElement(vnode, container) {
   }
 
   if (shapeFlag & shapeFlags.TEXT_CHILDREN) {
-    console.log("text");
+    // console.log("text");
     
     el.textContent = children;
   } else if (shapeFlag & shapeFlags.ARRAY_CHILDREN) {
-    console.log("array");
+    // console.log("array");
     mountChildren(children, el);
   }
   container.appendChild(el);
