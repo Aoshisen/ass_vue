@@ -26,7 +26,7 @@
 - [x] 实现注册组件事件功能
 - [x] 实现组件props功能
 - [x] 实现组件emit功能
-- [ ] 实现组件slots功能
+- [x] 实现组件slots功能
 - [ ] 实现Fragment 和Text类型节点
 - [ ] 实现getCurrentInstance
 - [ ] 实现provide-inject 功能
