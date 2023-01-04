@@ -1,30 +1,30 @@
 import { shapeFlags } from "../shared/shapeFlags";
 
 export function createVNode(type, props?, children?) {
-//下面的就是初始的type
-// {
-//   render() {
-//     return h(
-//       "div",
-//       {
-//         id: "root",
-//         class: ["red"],
-//         onClick() {
-//           console.log("this is app div onclick");
-//         },
-//         onMousedown() {
-//           console.log("mouseDown,app");
-//         },
-//       },
-//       [h("p", { class: "red" }, "hi red"), h(Foo, { count: 1 })]
-//     );
-//   },
-//   setup() {
-//     return {
-//       msg: "ass-vue",
-//     };
-//   },
-// };
+  //下面的就是初始的type
+  // {
+  //   render() {
+  //     return h(
+  //       "div",
+  //       {
+  //         id: "root",
+  //         class: ["red"],
+  //         onClick() {
+  //           console.log("this is app div onclick");
+  //         },
+  //         onMousedown() {
+  //           console.log("mouseDown,app");
+  //         },
+  //       },
+  //       [h("p", { class: "red" }, "hi red"), h(Foo, { count: 1 })]
+  //     );
+  //   },
+  //   setup() {
+  //     return {
+  //       msg: "ass-vue",
+  //     };
+  //   },
+  // };
 
   const vnode = {
     type,
@@ -39,9 +39,16 @@ export function createVNode(type, props?, children?) {
   } else if (Array.isArray(children)) {
     vnode.shapeFlag |= shapeFlags.ARRAY_CHILDREN;
   }
+
   //现在这个vnode 可以标识element 类型也可标识 stateful_component 类型的组件
   //也可以在vnode上面直接体现children 的类型，是需要即将渲染的text_children 还是需要path继续处理的array-children
 
+  //处理slots 的flog
+  if (vnode.shapeFlag & shapeFlags.STATEFUL_COMPONENT) {
+    if (typeof children === "object") {
+      vnode.shapeFlag |= shapeFlags.SLOT_CHILDREN;
+    }
+  }
   return vnode;
 }
 

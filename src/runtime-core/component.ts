@@ -2,6 +2,7 @@ import { shallowReadonly } from "../reactivity/reactive";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
+import { initSlots } from "./componentSlots";
 
 export function createComponentInstance(vnode: any) {
   const component = {
@@ -9,17 +10,18 @@ export function createComponentInstance(vnode: any) {
     type: vnode.type,
     setupState: {},
     props: {},
+    slots: {},
     emit: (event) => {},
   };
   //这里有点东西的啊,不想传递第一个参数等到emit调用的时候在传递,先把component填充好
   //填充emit的第一个参数
-  component.emit = emit.bind(null,component);
+  component.emit = emit.bind(null, component);
   return component;
 }
 
 export function setupComponent(instance) {
-  //TODO:initSlots
   initProps(instance, instance.vnode.props);
+  initSlots(instance, instance.vnode.children);
   //初始化一个有状态的component (有状态的组件和函数组件函数组件是没有任何状态的)
   setupStatefulComponent(instance);
 }

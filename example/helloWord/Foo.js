@@ -1,27 +1,12 @@
 import { h } from "../../lib/ass-vue.esm.js";
 export const Foo = {
-  setup(props,{emit}) {
-    //通过 setup 的第二个参数 处理emit
-
-    const emitAdd = () => {
-      emit("add",1,2)
-      emit("add-foo")
-      console.log("emit add");
-    };
-    return { emitAdd };
+  setup() {
+    return {};
   },
   render() {
-    //1.通过setup 传递过来
-    //2. 通过setup传递过来的参数能在render里面通过this 拿到，
-    //3. 通过props 传递过来的参数不可被修改
-    const btn = h(
-      "button",
-      {
-        onClick: this.emitAdd,
-      },
-      "emitAdd"
-    );
-    const foo = h("p", {}, "some text in fool" + this.count);
-    return h("div", {}, [btn, foo]);
+    const foo = h("p", {}, "Foo");
+    //我们需要在这里接收上面传递过来的slots 然后把他加入到h 函数渲染的函数里面去
+    //其实slots 就是当前虚拟节点的children 
+    return h("div", {}, [foo,this.$slots]);
   },
 };
