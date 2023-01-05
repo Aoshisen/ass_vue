@@ -38,9 +38,11 @@ function setupStatefulComponent(instance) {
   instance.proxy = proxy;
 
   if (setup) {
+    setCurrentInstance(instance)
     const setupResult = setup(shallowReadonly(instance.props), {
       emit: instance.emit,
     });
+    setCurrentInstance(null)
     handleSetupResult(instance, setupResult);
   }
 }
@@ -62,4 +64,14 @@ function finishComponentSetup(instance) {
   const Component = instance.type;
   //假设是一定有render的
   instance.render = Component.render;
+}
+
+let currentInstance = null;
+
+export function getCurrentInstance() {
+  return currentInstance;
+}
+
+function setCurrentInstance(instance) {
+  currentInstance = instance;
 }
