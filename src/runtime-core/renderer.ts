@@ -1,5 +1,6 @@
 import { shapeFlags } from "../shared/shapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
+import { Fragment, Text } from "./vnode";
 
 export function render(vnode, container) {
   //render 的时候啥也不干，就去调用patch方法
@@ -9,13 +10,27 @@ export function render(vnode, container) {
 
 function patch(vnode, container) {
   //处理组件
-  const { shapeFlag } = vnode;
-  if (shapeFlag & shapeFlags.ELEMENT) {
-    // console.log("element 类型");
-    processElement(vnode, container);
-  } else if (shapeFlag & shapeFlags.STATEFUL_COMPONENT) {
-    // console.log("component 类型");
-    processComponent(vnode, container);
+  const { shapeFlag, type } = vnode;
+
+  // 需要特殊处理我们的Fragment 类型的
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container);
+
+      break;
+    case Text:
+      processText(vnode, container);
+      break;
+
+    default:
+      if (shapeFlag & shapeFlags.ELEMENT) {
+        // console.log("element 类型");
+        processElement(vnode, container);
+      } else if (shapeFlag & shapeFlags.STATEFUL_COMPONENT) {
+        // console.log("component 类型");
+        processComponent(vnode, container);
+      }
+      break;
   }
 }
 
@@ -32,19 +47,21 @@ function mountElement(vnode, container) {
 
   for (const key in props) {
     const attributeValue = props[key];
-    const isOn=(eventName:string)=>/^on[A-Z]/.test(eventName)
+    const isOn = (eventName: string) => /^on[A-Z]/.test(eventName);
     if (isOn(key)) {
-      const eventName=key.slice(2).toLocaleLowerCase()
+      const eventName = key.slice(2).toLocaleLowerCase();
       el.addEventListener(eventName, attributeValue);
-    }else{
-      const _attributeValue=Array.isArray(attributeValue)?attributeValue.join(" "):attributeValue
+    } else {
+      const _attributeValue = Array.isArray(attributeValue)
+        ? attributeValue.join(" ")
+        : attributeValue;
       el.setAttribute(key, _attributeValue);
     }
   }
 
   if (shapeFlag & shapeFlags.TEXT_CHILDREN) {
     // console.log("text");
-    
+
     el.textContent = children;
   } else if (shapeFlag & shapeFlags.ARRAY_CHILDREN) {
     // console.log("array");
@@ -90,4 +107,14 @@ function setupRenderEffect(instance, initialVNode, container) {
   patch(subTree, container);
   // element=> mount
   initialVNode.el = subTree.el;
+}
+
+function processFragment(vnode, container) {
+  mountChildren(vnode.children, container);
+}
+
+function processText(vnode, container) {
+  const { children } = vnode;
+  const textNode = (vnode.el = document.createTextNode(children));
+  container.append(textNode);
 }

@@ -1,5 +1,7 @@
 import { shapeFlags } from "../shared/shapeFlags";
 
+export const Fragment = Symbol("Fragment");
+export const Text = Symbol("Text");
 export function createVNode(type, props?, children?) {
   //下面的就是初始的type
   // {
@@ -52,6 +54,9 @@ export function createVNode(type, props?, children?) {
   return vnode;
 }
 
+export function createTextVNode(text) {
+  return createVNode(Text, {}, text);
+}
 function getShapeFlag(type) {
   return typeof type === "string"
     ? shapeFlags.ELEMENT
