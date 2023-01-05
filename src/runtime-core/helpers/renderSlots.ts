@@ -1,4 +1,4 @@
-import { createVNode, Fragment, Text } from "../vnode";
+import { createVNode, Fragment,  } from "../vnode";
 
 export function renderSlots(slots, key, props) {
   const slot = slots[key];

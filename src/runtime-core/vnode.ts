@@ -57,6 +57,7 @@ export function createVNode(type, props?, children?) {
 export function createTextVNode(text) {
   return createVNode(Text, {}, text);
 }
+
 function getShapeFlag(type) {
   return typeof type === "string"
     ? shapeFlags.ELEMENT
