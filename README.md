@@ -29,7 +29,7 @@
 - [x] 实现组件slots功能
 - [x] 实现Fragment 和Text类型节点
 - [x] 实现getCurrentInstance
-- [ ] 实现provide-inject 功能
+- [x] 实现provide-inject 功能
 - [ ] 实现自定义渲染器custom renderer
 - [ ] 更新element 流程搭建
 - [ ] 更新element 的props
