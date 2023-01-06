@@ -104,6 +104,7 @@ function setupRenderEffect(instance, initialVNode, container) {
     initialVNode ->patch
     initialVNode -> element  mountElement 
     */
+// patch(vnode,container,parent)
   patch(subTree, container, instance);
   // element=> mount
   initialVNode.el = subTree.el;
