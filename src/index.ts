@@ -1,3 +1,3 @@
 // ass-vue 的出口文件
 
-export * from "./runtime-core"
+export * from "./runtime-dom";
