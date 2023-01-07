@@ -30,7 +30,7 @@
 - [x] 实现Fragment 和Text类型节点
 - [x] 实现getCurrentInstance
 - [x] 实现provide-inject 功能
-- [ ] 实现自定义渲染器custom renderer
+- [x] 实现自定义渲染器custom renderer
 - [ ] 更新element 流程搭建
 - [ ] 更新element 的props
 - [ ] 更新element的children
