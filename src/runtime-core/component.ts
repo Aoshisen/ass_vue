@@ -1,11 +1,10 @@
-import { shallowReadonly } from "../reactivity/reactive";
+import { shallowReadonly,proxyRefs } from "../reactivity";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
 import { initSlots } from "./componentSlots";
 
 export function createComponentInstance(vnode: any, parent) {
-  console.log("parent", parent);
   const component = {
     vnode,
     type: vnode.type,
@@ -14,11 +13,12 @@ export function createComponentInstance(vnode: any, parent) {
     slots: {},
     provides: parent ? parent.provides : {},
     parent,
+    isMounted:false,
+    subTree:{},
     emit: (event) => {},
   };
   //这里有点东西的啊,不想传递第一个参数等到emit调用的时候在传递,先把component填充好
   //填充emit的第一个参数
-  console.log(component, component.provides);
 
   component.emit = emit.bind(null, component);
   return component;
@@ -59,7 +59,7 @@ function handleSetupResult(instance, setupResult) {
   //TODO: function
 
   if (typeof setupResult === "object") {
-    instance.setupState = setupResult;
+    instance.setupState = proxyRefs(setupResult);
   }
   //保证组件的render是一定有值的
   finishComponentSetup(instance);
