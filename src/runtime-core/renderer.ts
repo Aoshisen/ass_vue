@@ -61,6 +61,7 @@ export function createRender(options) {
     const el = (n2.el = n1.el);
     patchProps(el, prevProps, nextProps);
   }
+
   function patchProps(el, prevProps, nextProps) {
     //新的props 里面值改变了或者是新的props 里面的值为undefined
     if (nextProps !== prevProps) {
@@ -88,6 +89,7 @@ export function createRender(options) {
     //创建节点  new Element
     // const el = document.createElement(type);
     const el = hostCreateElement(type);
+    //添加el属性
     n2.el = el;
 
     //设置节点属性   canvas el.x=10
@@ -188,6 +190,7 @@ export function createRender(options) {
 
   function processText(n1, n2, container) {
     const { children } = n2;
+    //对el赋值
     const textNode = (n2.el = document.createTextNode(children));
     container.append(textNode);
   }
