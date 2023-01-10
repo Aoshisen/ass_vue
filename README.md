@@ -32,7 +32,7 @@
 - [x] 实现provide-inject 功能
 - [x] 实现自定义渲染器custom renderer
 - [x] 更新element 流程搭建
-- [ ] 更新element 的props
+- [x] 更新element 的props
 - [ ] 更新element的children
 
 ---
