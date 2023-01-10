@@ -1,11 +1,12 @@
 import { effect } from "../reactivity/effect";
+import { EMPTY_OBJECT } from "../shared";
 import { shapeFlags } from "../shared/shapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 import { createAppAPI } from "./createApp";
 import { Fragment, Text } from "./vnode";
 
 export function createRender(options) {
-  const { createElement, patchProp, insert } = options;
+  const { hostCreateElement, hostPatchProp, hostInsert } = options;
   function render(vnode, container) {
     //render 的时候啥也不干，就去调用patch方法
     //方便进行递归的处理
@@ -50,11 +51,34 @@ export function createRender(options) {
   }
 
   function patchElement(n1, n2, container) {
-    console.log("patchElement");
+    // console.log("patchElement");
 
-    console.log("n1", n1);
+    // console.log("n1", n1);
 
-    console.log("n2", n2);
+    // console.log("n2", n2);
+    const prevProps = n1.props || EMPTY_OBJECT;
+    const nextProps = n2.props || EMPTY_OBJECT;
+    const el = (n2.el = n1.el);
+    patchProps(el, prevProps, nextProps);
+  }
+  function patchProps(el, prevProps, nextProps) {
+    //新的props 里面值改变了或者是新的props 里面的值为undefined
+    if (nextProps !== prevProps) {
+      for (const key in nextProps) {
+        const prevProp = prevProps[key];
+        const nextProp = nextProps[key];
+        if (prevProp !== nextProp) {
+          hostPatchProp(el, key, prevProp, nextProp);
+        }
+      }
+      if (prevProps !== EMPTY_OBJECT ){
+        for (const key in prevProps) {
+          if (!(key in nextProps)) {
+            hostPatchProp(el, key, prevProps[key], null);
+          }
+        }
+      }
+    }
   }
 
   //不依赖具体 的实现,而是依赖稳定的接口
@@ -63,14 +87,14 @@ export function createRender(options) {
     const { type, children, props, shapeFlag } = n2;
     //创建节点  new Element
     // const el = document.createElement(type);
-    const el = createElement(type);
+    const el = hostCreateElement(type);
     n2.el = el;
 
     //设置节点属性   canvas el.x=10
 
     for (const key in props) {
       const attributeValue = props[key];
-      patchProp(el, key, attributeValue);
+      hostPatchProp(el, key, null, attributeValue);
       // const isOn = (eventName: string) => /^on[A-Z]/.test(eventName);
       // if (isOn(key)) {
       //   const eventName = key.slice(2).toLocaleLowerCase();
@@ -95,7 +119,7 @@ export function createRender(options) {
     // 添加节点 canvas container.addChild(el)
 
     // container.appendChild(el);
-    insert(el, container);
+    hostInsert(el, container);
   }
 
   function mountChildren(children, container, parentComponent) {
