@@ -6,7 +6,13 @@ import { createAppAPI } from "./createApp";
 import { Fragment, Text } from "./vnode";
 
 export function createRender(options) {
-  const { hostCreateElement, hostPatchProp, hostInsert } = options;
+  const {
+    createElement: hostCreateElement,
+    patchProp: hostPatchProp,
+    insert: hostInsert,
+    remove: hostRemove,
+    setElementText: hostSetElementText,
+  } = options;
   function render(vnode, container) {
     //render 的时候啥也不干，就去调用patch方法
     //方便进行递归的处理
@@ -46,11 +52,11 @@ export function createRender(options) {
       mountElement(null, n2, container, parentComponent);
     } else {
       //update
-      patchElement(n1, n2, container);
+      patchElement(n1, n2, container,parentComponent);
     }
   }
 
-  function patchElement(n1, n2, container) {
+  function patchElement(n1, n2, container,parentComponent) {
     // console.log("patchElement");
 
     // console.log("n1", n1);
@@ -59,7 +65,44 @@ export function createRender(options) {
     const prevProps = n1.props || EMPTY_OBJECT;
     const nextProps = n2.props || EMPTY_OBJECT;
     const el = (n2.el = n1.el);
+    patchChildren(n1, n2, el,parentComponent);
     patchProps(el, prevProps, nextProps);
+  }
+
+  function patchChildren(n1, n2, container,parentComponent) {
+    //ArrayToText
+    //先删除Array 然后再 添加文本
+    const prevShapeFlag = n1.shapeFlag;
+    const c1 = n1.children;
+    const nextShapeFlag = n2.shapeFlag;
+    const c2 = n2.children;
+    if (nextShapeFlag & shapeFlags.TEXT_CHILDREN) {
+      if (prevShapeFlag & shapeFlags.ARRAY_CHILDREN) {
+        //ArrayToText
+        unMountChildren(n1.children);
+      }
+      if (c1 !== c2) {
+        hostSetElementText(c2, container);
+      }
+    } else {
+      //新的是一个数组类型的节点
+      //所以我们需要去判断老的是否为文本节点还是数组
+      if (prevShapeFlag & shapeFlags.TEXT_CHILDREN) {
+        //删除之前的文本节点，mount 新的child数组
+        hostSetElementText("", container);
+        mountChildren(c2,container,parentComponent)
+      }
+    }
+
+    console.log("patchChildren", n1, n2);
+  }
+  function unMountChildren(children) {
+    for (let i = 0; i < children.length; i++) {
+      const el = children[i].el;
+      //remove
+      //insert
+      hostRemove(el);
+    }
   }
 
   function patchProps(el, prevProps, nextProps) {
@@ -72,7 +115,7 @@ export function createRender(options) {
           hostPatchProp(el, key, prevProp, nextProp);
         }
       }
-      if (prevProps !== EMPTY_OBJECT ){
+      if (prevProps !== EMPTY_OBJECT) {
         for (const key in prevProps) {
           if (!(key in nextProps)) {
             hostPatchProp(el, key, prevProps[key], null);

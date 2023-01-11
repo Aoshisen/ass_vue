@@ -24,10 +24,22 @@ function insert(el, container) {
   return container.append(el);
 }
 
+function remove(child) {
+  const parent = child.parentNode;
+  if (parent) {
+    parent.removeChild(child);
+  }
+}
+function setElementText(text, container) {
+  container.textContent = text;
+}
+
 const renderer: any = createRender({
-  hostCreateElement: createElement,
-  hostPatchProp: patchProp,
-  hostInsert: insert,
+  insert,
+  patchProp,
+  createElement,
+  remove,
+  setElementText,
 });
 
 //通过createApp 把dom 创建元素的方法默认传递给createApp
