@@ -2,7 +2,8 @@ import { h } from "../../lib/ass-vue.esm.js";
 
 import ArrayToText from "./ArrayToText.js";
 import TextToText from './TextToText.js'
-import TextToArray from "./TextToArray.js";
+// import TextToArray from "./TextToArray.js";
+import ArrayToArray from "./ArrayToArray.js";
 export const App = {
   name: "App",
   setup() {},
@@ -14,9 +15,9 @@ export const App = {
       //老的是Text 新的是不同的text
       // h(TextToText),
       //老的是text 新的是Array
-      h(TextToArray),
+      // h(TextToArray),
       //老的是Array 新的也是Array
-      // h(ArrayToArray),
+      h(ArrayToArray),
     ]);
   },
 };
