@@ -160,7 +160,7 @@ export function createRender(options) {
       if (pointer <= nextLastChildIndex) {
         //如果新的比老的长
         console.log("新的比老的长");
-        
+
         const nextPos = nextLastChildIndex + 1;
         const anchor =
           nextPos < nextChildrenArray.length
@@ -184,8 +184,63 @@ export function createRender(options) {
         hostRemove(prevChildrenArray[pointer].el);
         pointer++;
       }
+    } else {
+      //中间对比
+      let s1 = pointer;
+      let s2 = pointer;
+
+      //新节点需要最多对比的数量
+      let toBePatched = nextLastChildIndex - pointer + 1;
+      let patched = 0;
+      //map 映射
+      //如果用户给了key
+      const keyToNewIndexMap = new Map();
+      for (let i = s2; i <= nextLastChildIndex; i++) {
+        const nextChild = nextChildrenArray[i];
+        keyToNewIndexMap.set(nextChild.key, i);
+      }
+
+      let newIndex;
+      for (let i = s1; i <= prevLastChildIndex; i++) {
+        const prevChild = prevChildrenArray[i];
+        //看当前的key在不在老的节点建立的映射表里面
+        //null undefined
+        if (patched >= toBePatched) {
+          hostRemove(prevChild.el)
+          continue;
+        }
+        if (prevChild.key !== null) {
+          newIndex = keyToNewIndexMap.get(prevChild.key);
+          //如果用户给了key
+        } else {
+          //如果用户没有给key
+          for (let j = s2; j < nextLastChildIndex; j++) {
+            if (isSomeVNodeType(prevChild, nextChildrenArray[j])) {
+              newIndex = j;
+              break;
+            }
+          }
+        }
+
+        //基于之前的节点去删除元素或者是新增元素
+        if (newIndex === undefined) {
+          hostRemove(prevChild.el);
+        } else {
+          //如果查找到了
+          //那么继续去patch 对比
+          patch(
+            prevChild,
+            nextChildrenArray[newIndex],
+            container,
+            parentComponent,
+            null
+          );
+          patched++;
+        }
+      }
     }
   }
+
   function unMountChildren(children) {
     for (let i = 0; i < children.length; i++) {
       const el = children[i].el;
