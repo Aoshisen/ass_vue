@@ -37,8 +37,8 @@
 
 ---
 
-- [ ] 更新element的children- 双端对比diff算法（1）
-- [ ] 更新element的children- 双端对比diff算法（2）
+- [x] 更新element的children- 双端对比diff算法（1）
+- [x] 更新element的children- 双端对比diff算法（2）
 - [ ] 更新element的children- 双端对比diff算法（3）
 
 ---
