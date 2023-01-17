@@ -70,7 +70,6 @@ export function createRender(options) {
   }
 
   function patchChildren(n1, n2, container, parentComponent, anchor) {
-    debugger;
     //ArrayToText
     //先删除Array 然后再 添加文本
     const prevShapeFlag = n1.shapeFlag;
@@ -195,6 +194,18 @@ export function createRender(options) {
       //map 映射
       //如果用户给了key
       const keyToNewIndexMap = new Map();
+
+      //创建一个定长的数组这样性能是最好的
+      const newIndexToOldIndexMap = new Array(toBePatched);
+      let moved = false;
+      let maxNewIndexSoFar = 0;
+
+      //0代表是没有赋值
+      for (let i = 0; i < toBePatched; i++) {
+        //初始化映射表
+        newIndexToOldIndexMap[i] = 0;
+      }
+
       for (let i = s2; i <= nextLastChildIndex; i++) {
         const nextChild = nextChildrenArray[i];
         keyToNewIndexMap.set(nextChild.key, i);
@@ -206,7 +217,7 @@ export function createRender(options) {
         //看当前的key在不在老的节点建立的映射表里面
         //null undefined
         if (patched >= toBePatched) {
-          hostRemove(prevChild.el)
+          hostRemove(prevChild.el);
           continue;
         }
         if (prevChild.key !== null) {
@@ -228,6 +239,14 @@ export function createRender(options) {
         } else {
           //如果查找到了
           //那么继续去patch 对比
+          //确定新的元素存在
+          if (newIndex >= maxNewIndexSoFar) {
+            maxNewIndexSoFar = newIndex;
+          } else {
+            moved = true;
+          }
+          newIndexToOldIndexMap[newIndex - s2] = i + 1;
+
           patch(
             prevChild,
             nextChildrenArray[newIndex],
@@ -236,6 +255,35 @@ export function createRender(options) {
             null
           );
           patched++;
+        }
+      }
+
+      const increasingNewIndexSequence = moved
+        ? getSequence(newIndexToOldIndexMap)
+        : [];
+
+      //最长递增子序列
+      let j = increasingNewIndexSequence.length - 1;
+      for (let i = toBePatched - 1; i >= 0; i--) {
+        const nexIndex = i + s2;
+        const nextChild = nextChildrenArray[nexIndex];
+        const anchor =
+          nexIndex + 1 < nextChildrenArray.length
+            ? nextChildrenArray[nexIndex + 1].el
+            : null;
+
+        //创建新的元素
+        if (newIndexToOldIndexMap[i] === 0) {
+          patch(null, nextChild, container, parentComponent, anchor);
+        } else if (moved) {
+          if (j < 0 || i !== increasingNewIndexSequence[j]) {
+            //调用insert 方法 ，但是insert 方法需要基于后面一个元素插入，所以我们需要先把后面的元素先确定好然后再插入前面的元素
+            // 所以这边的循环就要换一下
+            console.log("移动位置");
+            hostInsert(nextChild.el, container, anchor);
+          } else {
+            j--;
+          }
         }
       }
     }
@@ -386,4 +434,45 @@ export function createRender(options) {
   return {
     createApp: createAppAPI(render),
   };
+}
+
+function getSequence(arr: number[]): number[] {
+  const p = arr.slice();
+  const result = [0];
+  let i, j, u, v, c;
+  const len = arr.length;
+  for (i = 0; i < len; i++) {
+    const arrI = arr[i];
+    if (arrI !== 0) {
+      j = result[result.length - 1];
+      if (arr[j] < arrI) {
+        p[i] = j;
+        result.push(i);
+        continue;
+      }
+      u = 0;
+      v = result.length - 1;
+      while (u < v) {
+        c = (u + v) >> 1;
+        if (arr[result[c]] < arrI) {
+          u = c + 1;
+        } else {
+          v = c;
+        }
+      }
+      if (arrI < arr[result[u]]) {
+        if (u > 0) {
+          p[i] = result[u - 1];
+        }
+        result[u] = i;
+      }
+    }
+  }
+  u = result.length;
+  v = result[u - 1];
+  while (u-- > 0) {
+    result[u] = v;
+    v = p[v];
+  }
+  return result;
 }
