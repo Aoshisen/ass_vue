@@ -156,6 +156,7 @@ export function createRender(options) {
     }
 
     if (pointer > prevLastChildIndex) {
+      
       if (pointer <= nextLastChildIndex) {
         //如果新的比老的长
         console.log("新的比老的长");
