@@ -266,6 +266,7 @@ export function createRender(options) {
       //最长递增子序列
       let j = increasingNewIndexSequence.length - 1;
       for (let i = toBePatched - 1; i >= 0; i--) {
+        //在确定新的children 里面有对应的节点的时候给 newIndexToOldIndexMap 的对应位置赋值
         const nexIndex = i + s2;
         const nextChild = nextChildrenArray[nexIndex];
         const anchor =
