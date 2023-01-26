@@ -156,7 +156,6 @@ export function createRender(options) {
     }
 
     if (pointer > prevLastChildIndex) {
-      
       if (pointer <= nextLastChildIndex) {
         //如果新的比老的长
         console.log("新的比老的长");
@@ -226,7 +225,7 @@ export function createRender(options) {
           //如果用户给了key
         } else {
           //如果用户没有给key
-          for (let j = s2; j < nextLastChildIndex; j++) {
+          for (let j = s2; j <= nextLastChildIndex; j++) {
             if (isSomeVNodeType(prevChild, nextChildrenArray[j])) {
               newIndex = j;
               break;
