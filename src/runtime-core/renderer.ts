@@ -1,9 +1,11 @@
+import { createJsxJsxClosingFragment } from "typescript";
 import { effect } from "../reactivity/effect";
 import { EMPTY_OBJECT } from "../shared";
 import { shapeFlags } from "../shared/shapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 import { createAppAPI } from "./createApp";
 import { Fragment, Text } from "./vnode";
+import shouldUpdateComponent from "./componentUpdateUtils";
 
 export function createRender(options) {
   const {
@@ -370,28 +372,49 @@ export function createRender(options) {
   function processComponent(n1, n2, container, parentComponent, anchor) {
     //处理组件
     //先去mountComponent
-    mountComponent(n1, n2, container, parentComponent, anchor);
+    if (!n1) {
+      //如果n1不存在那么就是第一次创建 ，那么就先去挂载组件
+      mountComponent(n2, container, parentComponent, anchor);
+    } else {
+      //如果n1存在那么就去更新组件
+      updateComponent(n1, n2);
+    }
+    //todo:updateComponent
   }
 
-  function mountComponent(n1, n2, container, parentComponent, anchor) {
+  function updateComponent(n1, n2) {
+    const instance = (n2.component = n1.component);
+    if (shouldUpdateComponent(n1, n2)) {
+      instance.next = n2;
+      instance.update();
+    }else{
+      n2.el=n1.el;
+      instance.vnode=n2;
+    }
+  }
+
+  function mountComponent(initialVNode, container, parentComponent, anchor) {
     /*
 1. 通过initialVNode 创建组件实例对象
 2. 通过组件实例对象来初始化组件(component) 处理props 处理slot 处理当前组件调用setup返回出来的值
 3. 创建renderEffect 
 */
 
-    const instance = createComponentInstance(n2, parentComponent);
+    const instance = (initialVNode.component = createComponentInstance(
+      initialVNode,
+      parentComponent
+    ));
 
     setupComponent(instance);
 
-    setupRenderEffect(instance, n2, container, null);
+    setupRenderEffect(instance, initialVNode, container, null);
   }
 
   function setupRenderEffect(instance, initialVNode, container, anchor) {
     //因为 count 改变的值是一个响应式对象，而我们需要收集到响应式对象改变所触发的依赖
     //所以我们在这里收集依赖
     //这里也是一次渲染逻辑的终点
-    effect(() => {
+    instance.update = effect(() => {
       if (!instance.isMounted) {
         console.log("mount");
 
@@ -410,6 +433,18 @@ export function createRender(options) {
 
         instance.isMounted = true;
       } else {
+        //
+        console.log("update");
+        //更新组件的props
+        //需要一个更新之后的虚拟节点
+
+        const { next, vnode } = instance;
+
+        if (next) {
+          vnode.el = next.el;
+          updateComponentPreRender(instance, next);
+        }
+
         const { proxy } = instance;
         const subTree = instance.render.call(proxy);
         const prevSubTree = instance.subTree;
@@ -419,6 +454,12 @@ export function createRender(options) {
         patch(prevSubTree, subTree, container, instance, anchor);
       }
     });
+  }
+
+  function updateComponentPreRender(instance, nextVNode) {
+    instance.vnode = nextVNode;
+    instance.next = null;
+    instance.props = nextVNode.props;
   }
 
   function processFragment(n1, n2, container, parentComponent, anchor) {
