@@ -10,3 +10,5 @@ export { getCurrentInstance } from "./component";
 export { provide, inject } from "./apiInject";
 
 export { createRender } from "./renderer";
+
+export {nextTick} from "./scheduler"
