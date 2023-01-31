@@ -36,12 +36,15 @@ function parseElement(context) {
   return element;
 }
 
+//parseTag 有两个作用，如果是以< 开始的，那么就返回我们的tag 以及type,然后推进我们的context 
+
+//如果是以结尾，那么就推进context就行了，不用返回什么东西
 function parseTag(context, type: TagType) {
   //Implement
   // 1.解析tag
   // 2.删除处理完成的代码
   // 正则匹配
-  const reg = new RegExp(/^<([a-z]*)/i);
+  const reg = new RegExp(/^<\/?([a-z]*)/i);
   const match: any = reg.exec(context.source);
   const tag = match[1];
   // console.log(match,"match<<");
