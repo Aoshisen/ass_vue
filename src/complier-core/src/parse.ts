@@ -25,6 +25,10 @@ function parseChildren(context) {
       node = parseElement(context);
     }
   }
+  if(node===undefined){
+    //解析text类型
+    node=parseText(context)
+  }
   nodes.push(node);
   return nodes;
 }
@@ -79,7 +83,7 @@ function parseInterpolation(context) {
   const rawContentLength = closeIndex - openDelimiter.length;
 
   //得到message  截取得到
-  const rawContent = context.source.slice(0, rawContentLength);
+  const rawContent = parseTextData(context,rawContentLength);
 
   const content = rawContent.trim();
 
@@ -104,3 +108,21 @@ function createContext(content: string) {
     source: content,
   };
 }
+
+function parseText(context: any): any {
+  //1.获取当前的内容
+  //推进字符串
+  const content = parseTextData(context,context.source.length);
+  // console.log(context.source,"source");
+   return {
+        type: NodeTypes.TEXT,
+        content,
+      }
+}
+
+function parseTextData(context: any,length) {
+  const content = context.source.slice(0, length);
+  advanceBy(context, content.length);
+  return content;
+}
+
