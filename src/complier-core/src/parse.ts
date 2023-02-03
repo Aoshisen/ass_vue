@@ -21,13 +21,12 @@ function parseChildren(context, ancestors) {
     const s = context.source;
     if (s.startsWith("{{")) {
       node = parseInterpolation(context);
-    } else if (s[0] === "<") {
+    } else if (s.startsWith("<")) {
       //解析<div></div>
       if (/[a-z]/i.test(s[1])) {
         node = parseElement(context, ancestors);
       }
-    }
-    if (node === undefined) {
+    } else {
       //解析text类型
       node = parseText(context);
     }
@@ -42,16 +41,13 @@ function isEnd(context, ancestors) {
   const s = context.source;
   if (s.startsWith("</")) {
     //遇到结束标记的时候我们需要拿到我们的已经处理了的tag列表来判断一下
-    for (let i = 0; i < ancestors.length; i++) {
+    for (let i = ancestors.length - 1; i >= 0; i--) {
       const tag = ancestors[i].tag;
-      if (s.slice(2.2 + tag.length) === tag) {
+      if (startsWithEndTagOpen(s, tag)) {
         return true;
       }
     }
   }
-  // if (ancestors && s.startsWith(`</${ancestors}>`)) {
-  //   return true;
-  // }
   return !s;
 }
 
@@ -59,11 +55,25 @@ function parseElement(context, ancestors) {
   const element: any = parseTag(context, TagType.Start);
   //收集我们的element
   ancestors.push(element);
-  element.children = parseChildren(context, element.tag);
+  element.children = parseChildren(context, ancestors);
   //弹出我们的处理完的element
-  ancestors.pop(element);
-  parseTag(context, TagType.End);
+  ancestors.pop();
+
+  //判断结束标签是否和开始标签一样；如果一样就销毁掉，如果不一样就抛出错误
+
+  if (startsWithEndTagOpen(context.source, element.tag)) {
+    parseTag(context, TagType.End);
+  } else {
+    throw new Error(`缺少结束标签:${element.tag}`);
+  }
   return element;
+}
+
+function startsWithEndTagOpen(source, tag) {
+  return (
+    source.startsWith("</") &&
+    source.slice(2, 2 + tag.length).toLowerCase() === tag.toLowerCase()
+  );
 }
 
 //parseTag 有两个作用，如果是以< 开始的，那么就返回我们的tag 以及type,然后推进我们的context

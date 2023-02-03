@@ -83,9 +83,10 @@ describe("Parser", () => {
   });
 
   //记录我们已经解析过的tag标签，如果存在在list里面就可以结束当前的解析,如果没有的话就抛出错误，
-  test.only("should throw error when lack end tag", () => {
+  test("should throw error when lack end tag", () => {
+    // baseParse("<div><span></div>");
     expect(() => {
       baseParse("<div><span></div>");
-    }).toThrow();
+    }).toThrow("缺少结束标签:span");
   });
 });
