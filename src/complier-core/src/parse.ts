@@ -4,18 +4,19 @@ const enum TagType {
   Start,
   End,
 }
+
 export function baseParse(content: string) {
   const context = createContext(content);
-  return createRoot(parseChildren(context));
+  return createRoot(parseChildren(context, []));
 }
 
 function createRoot(children) {
   return { children };
 }
 
-function parseChildren(context) {
+function parseChildren(context, ancestors) {
   const nodes: any = [];
-  while (!isEnd(context)) {
+  while (!isEnd(context, ancestors)) {
     let node;
     const s = context.source;
     if (s.startsWith("{{")) {
@@ -23,7 +24,7 @@ function parseChildren(context) {
     } else if (s[0] === "<") {
       //解析<div></div>
       if (/[a-z]/i.test(s[1])) {
-        node = parseElement(context);
+        node = parseElement(context, ancestors);
       }
     }
     if (node === undefined) {
@@ -35,21 +36,33 @@ function parseChildren(context) {
   return nodes;
 }
 
-function isEnd(context) {
+function isEnd(context, ancestors) {
   //当遇到借宿标签的时候就是end
   //当context.source 没有值的时候就是end
   const s = context.source;
-  if (s.startsWith("</div>")) {
-    return true;
+  if (s.startsWith("</")) {
+    //遇到结束标记的时候我们需要拿到我们的已经处理了的tag列表来判断一下
+    for (let i = 0; i < ancestors.length; i++) {
+      const tag = ancestors[i].tag;
+      if (s.slice(2.2 + tag.length) === tag) {
+        return true;
+      }
+    }
   }
+  // if (ancestors && s.startsWith(`</${ancestors}>`)) {
+  //   return true;
+  // }
   return !s;
 }
 
-function parseElement(context) {
+function parseElement(context, ancestors) {
   const element: any = parseTag(context, TagType.Start);
-  element.children = parseChildren(context);
+  //收集我们的element
+  ancestors.push(element);
+  element.children = parseChildren(context, element.tag);
+  //弹出我们的处理完的element
+  ancestors.pop(element);
   parseTag(context, TagType.End);
-  console.log(context.source, "=============");
   return element;
 }
 
@@ -61,8 +74,6 @@ function parseTag(context, type: TagType) {
   // 1.解析tag
   // 2.删除处理完成的代码
   // 正则匹配
-
-  console.log(context, type, "parseTag<<<<<<<<<");
 
   const reg = new RegExp(/^<\/?([a-z]*)/i);
   const match: any = reg.exec(context.source);
@@ -92,7 +103,6 @@ function parseInterpolation(context) {
     openDelimiter.length
   );
 
-  console.log(context, "parseInterpolation<<<<<<");
   //剔除掉{{
   advanceBy(context, openDelimiter.length);
 
@@ -104,11 +114,8 @@ function parseInterpolation(context) {
   const content = rawContent.trim();
 
   //推进 提出掉 message}}
-  console.log("context", context);
-
-  advanceBy(context,  closeDelimiter.length);
-
-  console.log("context>>>>>>>>>>>>>parseInterpolation", context);
+  // console.log("context", context);
+  advanceBy(context, closeDelimiter.length);
 
   return {
     type: NodeTypes.INTERPOLATION,
@@ -134,18 +141,17 @@ function parseText(context: any): any {
   //推进字符串
   //判断结束符,遇到结束符号就停止
   let endIndex = context.source.length;
-  const endToken = "{{";
-  const index = context.source.indexOf(endToken);
-  console.log(context, "parseText<<<<<");
+  const endTokens = ["{{", "<"];
 
-  if (index !== -1) {
-    endIndex = index;
+  for (let i = 0; i < endTokens.length; i++) {
+    const index = context.source.indexOf(endTokens[i]);
+
+    if (index !== -1 && endIndex > index) {
+      endIndex = index;
+    }
   }
-  console.log("endIndex", endIndex);
 
   const content = parseTextData(context, endIndex);
-  console.log(content, "content----------");
-  console.log(context, "end<<<<<<<<<<<<<");
   return {
     type: NodeTypes.TEXT,
     content,

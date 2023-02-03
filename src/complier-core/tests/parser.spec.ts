@@ -54,4 +54,38 @@ describe("Parser", () => {
       ],
     });
   });
+
+  test("Nested Element", () => {
+    const ast = baseParse("<div><p>hi</p>{{message}}</div>");
+    expect(ast.children[0]).toStrictEqual({
+      type: NodeTypes.ELEMENT,
+      tag: "div",
+      children: [
+        {
+          type: NodeTypes.ELEMENT,
+          tag: "p",
+          children: [
+            {
+              type: NodeTypes.TEXT,
+              content: "hi",
+            },
+          ],
+        },
+        {
+          type: NodeTypes.INTERPOLATION,
+          content: {
+            type: NodeTypes.SIMPLE_EXPRESSION,
+            content: "message",
+          },
+        },
+      ],
+    });
+  });
+
+  //记录我们已经解析过的tag标签，如果存在在list里面就可以结束当前的解析,如果没有的话就抛出错误，
+  test.only("should throw error when lack end tag", () => {
+    expect(() => {
+      baseParse("<div><span></div>");
+    }).toThrow();
+  });
 });
