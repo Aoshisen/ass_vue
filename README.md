@@ -54,7 +54,7 @@
 - [x] 实现解析element
 - [x] 实现解析text 功能
 - [x] 实现解析三种联合类型
-- [ ] parse的实现原理
+- [x] parse的实现原理
 - [ ] 实现transform功能
 - [ ] 实现代码生成string类型
 - [ ] 实现代码生成插值类型
