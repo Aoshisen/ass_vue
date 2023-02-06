@@ -2,7 +2,7 @@ import { NodeTypes } from "../src/ast";
 import { baseParse } from "../src/parse";
 import { transform } from "../src/transform";
 
-describe("transform happy path", () => {
+describe("transform", () => {
   it("happy path", () => {
     const ast = baseParse("<div>hi,{{message}}</div>");
     const plugin = (node) => {
