@@ -5,6 +5,7 @@ export function transform(root: any, options: any={}) {
   createRootCodegen(root);
 }
 
+//rootCodegen Node for codegen
 function createRootCodegen(root:any){
   root.codegenNode=root.children[0]
 }
