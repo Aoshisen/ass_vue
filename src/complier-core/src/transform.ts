@@ -1,7 +1,12 @@
-export function transform(root: any, options: any) {
+export function transform(root: any, options: any={}) {
   const context = createTransformContext(root, options);
 
   travelNode(root, context);
+  createRootCodegen(root);
+}
+
+function createRootCodegen(root:any){
+  root.codegenNode=root.children[0]
 }
 
 function createTransformContext(root: any, options: any) {
