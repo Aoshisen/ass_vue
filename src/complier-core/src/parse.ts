@@ -11,7 +11,7 @@ export function baseParse(content: string) {
 }
 
 function createRoot(children) {
-  return { children };
+  return { children, type: NodeTypes.ROOT };
 }
 
 function parseChildren(context, ancestors) {
@@ -34,8 +34,6 @@ function parseChildren(context, ancestors) {
   }
   return nodes;
 }
-
-
 
 function isEnd(context, ancestors) {
   //当遇到借宿标签的时候就是end
