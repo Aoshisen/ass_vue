@@ -3,7 +3,6 @@ import { TO_DISPLAY_STRING } from "./runtimeHelpers";
 
 export function transform(root: any, options: any={}) {
   const context = createTransformContext(root, options);
-
   travelNode(root, context);
   createRootCodegen(root);
   root.helpers=[...context.helpers.keys()]
@@ -30,7 +29,7 @@ function travelNode(node: any, context) {
   const nodeTransforms = context.nodeTransforms;
   for (let i = 0; i < nodeTransforms.length; i++) {
     const nodeTransform = nodeTransforms[i];
-    nodeTransform(node);
+    nodeTransform(node,context);
   }
 
   switch (node.type) {
