@@ -1,4 +1,5 @@
 import { NodeTypes } from "../ast";
+import { isText } from "./utils";
 
 //因为需要延后执行，所以我们返回一个函数
 export function transformText(node) {
@@ -35,8 +36,4 @@ export function transformText(node) {
       }
     };
   }
-}
-
-function isText(node) {
-  return node.type === NodeTypes.INTERPOLATION || node.type === NodeTypes.TEXT;
 }

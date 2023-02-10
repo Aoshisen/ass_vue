@@ -63,9 +63,10 @@ function genNode(node: any, context: any) {
 function genElement(node, context) {
   const { push, helper } = context;
   const { tag, children, props } = node;
-  push(`${helper(CREATE_ELEMENT_VNODE)}("${tag}"),${props},`);
-  genNode(children, context);
-  // genNullable([tag, props, children]);
+  push(`${helper(CREATE_ELEMENT_VNODE)}(`);
+  // genNode(children, context);
+  const nodeList = genNullable([tag, props, children]);
+  genNodeList(nodeList, context);
   push(")");
 }
 
@@ -73,14 +74,16 @@ function genNullable(args: any) {
   return args.map((arg) => arg || "null");
 }
 
-function genNodeList(nodes,context) {
+function genNodeList(nodes, context) {
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
-    if(isString(node)){
+    if (isString(node)) {
       context.push(node);
+    } else {
+      genNode(node, context);
     }
-    else{
-      genNode(node,context);
+    if (i < nodes.length - 1) {
+      context.push(",");
     }
   }
 }
