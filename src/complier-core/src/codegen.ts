@@ -16,7 +16,7 @@ export function generator(ast) {
   const functionName = "render";
   const signature = args.join(", ");
 
-  push(`function ${functionName}(${signature}){`);
+  push(`function ${functionName}(${signature}) {`);
   push("return ");
   genNode(ast.codegenNode, context);
   push("}");
@@ -29,7 +29,6 @@ function genFunctionPreamble(ast, context) {
   const { push } = context;
   const VueBinging = "Vue";
 
-  // const helpers=["toDisplayString"]
   const aliasHelper = (s) => `${helperMapName[s]}:_${helperMapName[s]}`;
   if (ast.helpers.length) {
     push(`const {${ast.helpers.map(aliasHelper).join(", ")}}=${VueBinging}`);
@@ -39,6 +38,7 @@ function genFunctionPreamble(ast, context) {
 }
 
 function genNode(node: any, context: any) {
+  // console.log("genNode>>>>>>", node);
   switch (node.type) {
     case NodeTypes.TEXT:
       genText(node, context);
@@ -63,8 +63,12 @@ function genNode(node: any, context: any) {
 function genElement(node, context) {
   const { push, helper } = context;
   const { tag, children } = node;
-  //联合类型该怎么半
-  push(`${helper(CREATE_ELEMENT_VNODE)}("${tag}"), null,`);
+  //获取 element 下面的两种类型元素；
+  push(`${helper(CREATE_ELEMENT_VNODE)}("${tag}"),null,`);
+  // for (let i = 0; i < children.length; i++) {
+  //   const child = children[i];
+  //   genNode(child,context)
+  // }
   genNode(children, context);
   push(")");
 }
@@ -95,17 +99,13 @@ function createCodegenContext() {
 }
 
 function genExpress(node: any, context: any) {
-  const { push } = context;
-  push(`${node.content}`);
-  console.log("genExpress>>>>>");
+  context.push(`${node.content}`);
 }
 
 function genCompoundExpression(node: any, context: any) {
   const { push } = context;
-  const children = node.children;
-  for (let i = 0; i < children.length; i++) {
-    const child = children[i];
-    console.log("compoundExpression", child);
+  for (let i = 0; i < node.children.length; i++) {
+    const child = node.children[i];
     if (isString(child)) {
       push(child);
     } else {
@@ -113,6 +113,3 @@ function genCompoundExpression(node: any, context: any) {
     }
   }
 }
-// return function render(_ctx,cache){
-// return "hi"
-// }

@@ -1,3 +1,4 @@
+// ok
 import { NodeTypes } from "../ast";
 
 export function transformExpression(node) {
@@ -7,6 +8,6 @@ export function transformExpression(node) {
 }
 
 function processExpression(node) {
-  node.content = `_ctx.` + node.content;
+  node.content = `_ctx.${node.content}` ;
   return node;
 }

@@ -27,17 +27,9 @@ describe("codeGen", () => {
   });
 
   it("element", () => {
-    const ast = baseParse("<div></div>");
-    transform(ast, { nodeTransforms: [transformElement] });
-    const { code } = generator(ast);
-    expect(code).toMatchSnapshot();
-  });
-
-  it("all type element", () => {
-    const ast = baseParse("<div>hi,{{message}}</div>");
-    transform(ast, {
-      nodeTransforms: [transformText],
-    });
+    const ast: any = baseParse("<div>hi,{{message}}</div>");
+    transform(ast, { nodeTransforms: [transformText, transformElement] });
+    console.log("ast", ast.codegenNode.children);
     const { code } = generator(ast);
     expect(code).toMatchSnapshot();
   });

@@ -1,21 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`codeGen all type element 1`] = `
-"const {create_element_vnode:_create_element_vnode}=Vue
-return function render(_ctx, _cache){return _create_element_vnode("div"), null,)}"
-`;
-
 exports[`codeGen element 1`] = `
-"const {create_element_vnode:_create_element_vnode}=Vue
-return function render(_ctx, _cache){return _create_element_vnode("div"), null,)}"
+"const {createElementVnode:_createElementVnode}=Vue
+return function render(_ctx, _cache) {return _createElementVnode("div"),null,'hi,' + _toDisplayString(message))}"
 `;
 
 exports[`codeGen interpolation 1`] = `
 "const {toDisplayString:_toDisplayString}=Vue
-return function render(_ctx, _cache){return _toDisplayString(_ctx.message)}"
+return function render(_ctx, _cache) {return _toDisplayString(_ctx.message)}"
 `;
 
 exports[`codeGen string 1`] = `
 "
-return function render(_ctx, _cache){return 'hi'}"
+return function render(_ctx, _cache) {return 'hi'}"
 `;

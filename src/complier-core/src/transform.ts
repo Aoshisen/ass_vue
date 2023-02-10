@@ -1,18 +1,21 @@
 import { NodeTypes } from "./ast";
 import { TO_DISPLAY_STRING } from "./runtimeHelpers";
 
+//传入nodeTransform 属性到options 里面，就会执行transform 然后改造我们的node 
 export function transform(root: any, options: any = {}) {
   const context = createTransformContext(root, options);
   travelNode(root, context);
-  createRootCodegen(root);
+  createRootCodegen(root, context);
   root.helpers = [...context.helpers.keys()];
 }
 
 //rootCodegen Node for codegen
-function createRootCodegen(root: any) {
-  const child = root.children[0];
-  if (child.type === NodeTypes.ELEMENT) {
-    root.codegenNode = child.codegenNode;
+function createRootCodegen(root: any, context) {
+  const { children } = root;
+  const child = children[0];
+  if (child.type === NodeTypes.ELEMENT && child.codegenNode) {
+    const codegenNode = child.codegenNode;
+    root.codegenNode = codegenNode;
   } else {
     root.codegenNode = child;
   }
@@ -31,12 +34,13 @@ function createTransformContext(root: any, options: any) {
 }
 
 function travelNode(node: any, context) {
+  // console.log("travelNode>>>>>>>>>>>",node);
   const nodeTransforms = context.nodeTransforms;
   for (let i = 0; i < nodeTransforms.length; i++) {
     const nodeTransform = nodeTransforms[i];
     nodeTransform(node, context);
   }
-
+  // console.log("travelNode>>>>end",node)
   switch (node.type) {
     case NodeTypes.INTERPOLATION:
       context.helper(TO_DISPLAY_STRING);
@@ -50,10 +54,8 @@ function travelNode(node: any, context) {
   }
 }
 
-function travelChildren(node: any, context: any) {
-  const children = node.children;
-  for (let i = 0; i < children.length; i++) {
-    const node = children[i];
-    travelNode(node, context);
-  }
+function travelChildren(parent: any, context: any) {
+  parent.children.forEach((node)=>{
+    travelNode(node,context)
+  })
 }

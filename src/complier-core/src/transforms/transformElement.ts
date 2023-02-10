@@ -12,13 +12,17 @@ export default function transformElement(node, context) {
     let vnodeProps;
 
     //children
-    const vnodeChildren = node.children;
+    const children = node.children;
+
+    const vnodeChildren = children[0];
+
     const vnodeElement = {
       type: NodeTypes.ELEMENT,
       tag: vnodeTag,
       props: vnodeProps,
       children: vnodeChildren,
     };
+
     node.codegenNode = vnodeElement;
   }
 }
