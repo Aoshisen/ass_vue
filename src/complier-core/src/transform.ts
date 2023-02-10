@@ -1,26 +1,31 @@
 import { NodeTypes } from "./ast";
 import { TO_DISPLAY_STRING } from "./runtimeHelpers";
 
-export function transform(root: any, options: any={}) {
+export function transform(root: any, options: any = {}) {
   const context = createTransformContext(root, options);
   travelNode(root, context);
   createRootCodegen(root);
-  root.helpers=[...context.helpers.keys()]
+  root.helpers = [...context.helpers.keys()];
 }
 
 //rootCodegen Node for codegen
-function createRootCodegen(root:any){
-  root.codegenNode=root.children[0]
+function createRootCodegen(root: any) {
+  const child = root.children[0];
+  if (child.type === NodeTypes.ELEMENT) {
+    root.codegenNode = child.codegenNode;
+  } else {
+    root.codegenNode = child;
+  }
 }
 
 function createTransformContext(root: any, options: any) {
   const context = {
     root,
     nodeTransforms: options.nodeTransforms || [],
-    helpers:new Map(),
-    helper(key){
-      context.helpers.set(key,1)
-    }
+    helpers: new Map(),
+    helper(key) {
+      context.helpers.set(key, 1);
+    },
   };
   return context;
 }
@@ -29,27 +34,26 @@ function travelNode(node: any, context) {
   const nodeTransforms = context.nodeTransforms;
   for (let i = 0; i < nodeTransforms.length; i++) {
     const nodeTransform = nodeTransforms[i];
-    nodeTransform(node,context);
+    nodeTransform(node, context);
   }
 
   switch (node.type) {
     case NodeTypes.INTERPOLATION:
-      context.helper(TO_DISPLAY_STRING)
+      context.helper(TO_DISPLAY_STRING);
       break;
-      case NodeTypes.ELEMENT:
-      case NodeTypes.ROOT:
-        travelChildren(node,context);
+    case NodeTypes.ELEMENT:
+    case NodeTypes.ROOT:
+      travelChildren(node, context);
       break;
     default:
       break;
   }
-
 }
 
 function travelChildren(node: any, context: any) {
   const children = node.children;
-    for (let i = 0; i < children.length; i++) {
-      const node = children[i];
-      travelNode(node, context);
-    }
+  for (let i = 0; i < children.length; i++) {
+    const node = children[i];
+    travelNode(node, context);
+  }
 }

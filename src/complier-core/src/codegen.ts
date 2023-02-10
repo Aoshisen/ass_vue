@@ -1,5 +1,10 @@
+import { isString } from "../../shared";
 import { NodeTypes } from "./ast";
-import { CREATE_ELEMENT_VNODE, TO_DISPLAY_STRING, helperMapName } from "./runtimeHelpers";
+import {
+  CREATE_ELEMENT_VNODE,
+  TO_DISPLAY_STRING,
+  helperMapName,
+} from "./runtimeHelpers";
 
 export function generator(ast) {
   const context = createCodegenContext();
@@ -44,19 +49,24 @@ function genNode(node: any, context: any) {
     case NodeTypes.SIMPLE_EXPRESSION:
       genExpress(node, context);
       break;
-
+    case NodeTypes.COMPOUND_EXPRESSION:
+      genCompoundExpression(node, context);
+      break;
     case NodeTypes.ELEMENT:
-    genElement(node, context);
+      genElement(node, context);
       break;
     default:
       break;
   }
 }
 
-function genElement(node,context){
-  const {push ,helper}=context;
-  const {tag}=node
-  push(`${helper(CREATE_ELEMENT_VNODE)}("${tag}")`)
+function genElement(node, context) {
+  const { push, helper } = context;
+  const { tag, children } = node;
+  //联合类型该怎么半
+  push(`${helper(CREATE_ELEMENT_VNODE)}("${tag}"), null,`);
+  genNode(children, context);
+  push(")");
 }
 
 function genText(node, context) {
@@ -87,6 +97,21 @@ function createCodegenContext() {
 function genExpress(node: any, context: any) {
   const { push } = context;
   push(`${node.content}`);
+  console.log("genExpress>>>>>");
+}
+
+function genCompoundExpression(node: any, context: any) {
+  const { push } = context;
+  const children = node.children;
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
+    console.log("compoundExpression", child);
+    if (isString(child)) {
+      push(child);
+    } else {
+      genNode(child, context);
+    }
+  }
 }
 // return function render(_ctx,cache){
 // return "hi"
