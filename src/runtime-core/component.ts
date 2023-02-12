@@ -1,4 +1,4 @@
-import { shallowReadonly,proxyRefs } from "../reactivity";
+import { shallowReadonly, proxyRefs } from "../reactivity";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
@@ -8,14 +8,14 @@ export function createComponentInstance(vnode: any, parent) {
   const component = {
     vnode,
     type: vnode.type,
-    next:null,
+    next: null,
     setupState: {},
     props: {},
     slots: {},
     provides: parent ? parent.provides : {},
     parent,
-    isMounted:false,
-    subTree:{},
+    isMounted: false,
+    subTree: {},
     emit: (event) => {},
   };
   //这里有点东西的啊,不想传递第一个参数等到emit调用的时候在传递,先把component填充好
@@ -69,6 +69,15 @@ function handleSetupResult(instance, setupResult) {
 function finishComponentSetup(instance) {
   const Component = instance.type;
   //假设是一定有render的
+  //在这里去调用我们的render 函数
+  //但是如果在这里面去引用我们的complier 模块的东西，这样会造成依赖的循环依赖；vue 是可以直接存在于运行时的，如果引入了complier 模块的话就不干净了；
+  //注册了compiler 然后在这里使用
+  if (compiler && !Component.render) {
+    if (Component.template) {
+      Component.render = compiler(Component.template);
+    }
+  }
+
   instance.render = Component.render;
 }
 
@@ -80,4 +89,10 @@ export function getCurrentInstance() {
 
 function setCurrentInstance(instance) {
   currentInstance = instance;
+}
+
+//注册组件，在index里面去调用注册我们的compiler；
+let compiler;
+export function registerRuntimeCompiler(_compiler) {
+  compiler = _compiler;
 }

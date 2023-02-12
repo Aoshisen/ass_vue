@@ -2,6 +2,7 @@ import { shapeFlags } from "../shared/shapeFlags";
 
 export const Fragment = Symbol("Fragment");
 export const Text = Symbol("Text");
+export { createVNode as createElementVNode };
 export function createVNode(type, props?, children?) {
   //下面的就是初始的type
   // {
@@ -32,7 +33,7 @@ export function createVNode(type, props?, children?) {
     type,
     props,
     children,
-    component:null,
+    component: null,
     el: null,
     key: props && props.key,
     shapeFlag: getShapeFlag(type),

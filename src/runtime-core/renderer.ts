@@ -421,7 +421,7 @@ export function createRender(options) {
           console.log("mount");
 
           const { proxy } = instance;
-          const subTree = (instance.subTree = instance.render.call(proxy));
+          const subTree = (instance.subTree = instance.render.call(proxy,proxy));
 
           //subTree 就是虚拟节点树
           /* 
@@ -448,7 +448,7 @@ export function createRender(options) {
           }
 
           const { proxy } = instance;
-          const subTree = instance.render.call(proxy);
+          const subTree = instance.render.call(proxy,proxy);
           const prevSubTree = instance.subTree;
           //更新subTree
           instance.subTree = subTree;
