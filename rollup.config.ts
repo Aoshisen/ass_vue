@@ -1,15 +1,15 @@
 import typescript from "@rollup/plugin-typescript";
-import pkg from "./package.json" assert { type: "json" };
 export default {
-  input: "src/index.ts",
+  input: "packages/vue/src/index.ts",
   output: [
     {
-      format: "cjs",
-      file: pkg.main,
+      formate: "cjs",
+      file: "packages/vue/dist/ass-vue.cjs.js",
     },
+
     {
-      format: "es",
-      file: pkg.module,
+      formate: "es",
+      file: "packages/vue/dist/ass-vue.esm.js",
     },
   ],
   plugins: [typescript()],
