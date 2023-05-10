@@ -5,6 +5,7 @@ import transformElement from "../src/transforms/transformElement";
 import { transformExpression } from "../src/transforms/transformExpression";
 import { transformText } from "../src/transforms/transformText";
 
+// import { describe, it, expect } from "vitest";
 describe("codeGen", () => {
   it("string", () => {
     const ast = baseParse("hi");

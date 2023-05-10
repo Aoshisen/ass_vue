@@ -11,6 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "@ass-vue/complier-core": "workspace:^",
-    "@ass-vue/runtime-dom": "workspace:^",
+    "@ass-vue/runtime-dom": "workspace:^"
   }
 }

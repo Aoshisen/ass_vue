@@ -1,4 +1,19 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`codeGen > element 1`] = `
+"const {toDisplayString:_toDisplayString, createElementVNode:_createElementVNode}=Vue
+return function render(_ctx, _cache) {return _createElementVNode('div',null,'hi,' + _toDisplayString(_ctx.message))}"
+`;
+
+exports[`codeGen > interpolation 1`] = `
+"const {toDisplayString:_toDisplayString}=Vue
+return function render(_ctx, _cache) {return _toDisplayString(_ctx.message)}"
+`;
+
+exports[`codeGen > string 1`] = `
+"
+return function render(_ctx, _cache) {return 'hi'}"
+`;
 
 exports[`codeGen element 1`] = `
 "const {toDisplayString:_toDisplayString, createElementVnode:_createElementVnode}=Vue
