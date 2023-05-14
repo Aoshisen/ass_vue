@@ -60,7 +60,7 @@
 - [x] 实现代码生成插值类型
 - [x] 实现代码生成三种联合类型
 - [x] 实现编译template成render函数
-- [ ] 实现monorepo
+- [x] 实现monorepo
 - [ ] 实现watchEffect
 
 
