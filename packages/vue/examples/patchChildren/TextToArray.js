@@ -1,4 +1,4 @@
-import { h, ref } from "../../lib/ass-vue.esm.js";
+import { h, ref } from "../../dist/ass-vue.esm.js";
 
 const prevChildren = "oldChildren";
 const nextChildren = [h("div", {}, "New"), h("div", {}, "Children")];

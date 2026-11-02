@@ -1,4 +1,4 @@
-import { h,getCurrentInstance } from "../../lib/ass-vue.esm.js";
+import { h, getCurrentInstance } from "../../dist/ass-vue.esm.js";
 export const Foo = {
   name: "Foo",
   setup() {

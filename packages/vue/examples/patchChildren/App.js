@@ -1,4 +1,4 @@
-import { h } from "../../lib/ass-vue.esm.js";
+import { h } from "../../dist/ass-vue.esm.js";
 
 import ArrayToText from "./ArrayToText.js";
 import TextToText from './TextToText.js'
@@ -6,7 +6,7 @@ import TextToText from './TextToText.js'
 import ArrayToArray from "./ArrayToArray.js";
 export const App = {
   name: "App",
-  setup() {},
+  setup() { },
   render() {
     return h("div", { tId: 1 }, [
       h("p", {}, "主页"),

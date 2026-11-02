@@ -1,4 +1,4 @@
-import { h, ref } from "../../lib/ass-vue.esm.js";
+import { h, ref } from "../../dist/ass-vue.esm.js";
 
 //左侧的对比
 // const prevChildren = [
@@ -188,14 +188,14 @@ import { h, ref } from "../../lib/ass-vue.esm.js";
 
 //fix c 节点应该是move 而不是删除之后重新创建的
 
-const prevChildren=[
+const prevChildren = [
   h("p", { key: "A" }, "A"),
   h("p", "C"),
   h("p", { key: "B" }, "B"),
   h("p", { key: "D" }, "D"),
 ]
 
-const nextChildren=[
+const nextChildren = [
   h("p", { key: "A" }, "A"),
   h("p", { key: "B" }, "B"),
   h("p", "C"),

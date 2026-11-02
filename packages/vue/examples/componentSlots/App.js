@@ -1,4 +1,4 @@
-import { h, createTextVNode } from "../../lib/ass-vue.esm.js";
+import { h, createTextVNode } from "../../dist/ass-vue.esm.js";
 import { Foo } from "./Foo.js";
 export const App = {
   name: "App",

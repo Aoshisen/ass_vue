@@ -1,4 +1,4 @@
-import { h, renderSlots } from "../../lib/ass-vue.esm.js";
+import { h, renderSlots } from "../../dist/ass-vue.esm.js";
 export const Foo = {
   setup() {
     return {};

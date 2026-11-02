@@ -1,4 +1,4 @@
-import { h, ref } from "../../lib/ass-vue.esm.js";
+import { h, ref } from "../../dist/ass-vue.esm.js";
 
 export const App = {
   name: "App",

@@ -43,6 +43,9 @@ function convert(value) {
 }
 
 export function isRef(value) {
+  if (value === null || value === undefined) {
+    return false
+  }
   return !!value.__v_isRef;
 }
 

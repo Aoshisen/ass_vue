@@ -323,6 +323,9 @@ function convert(value) {
     return isObject(value) ? reactive(value) : value;
 }
 function isRef(value) {
+    if (value === null || value === undefined) {
+        return false;
+    }
     return !!value.__v_isRef;
 }
 function unRef(ref) {
@@ -542,6 +545,7 @@ function shouldUpdateComponent(n1, n2) {
 }
 
 const queue = [];
+const activePreFlushCbs = [];
 const promiseResolve = Promise.resolve();
 let isFlushPending = false;
 function queueJobs(job) {
@@ -560,9 +564,16 @@ function queueFlush() {
 }
 function flushJob() {
     isFlushPending = false;
+    //组件渲染之前
+    flushPreFlushCbs();
     let job;
     while ((job = queue.shift())) {
         job && job();
+    }
+}
+function flushPreFlushCbs() {
+    for (let i = 0; i < activePreFlushCbs.length; i++) {
+        activePreFlushCbs[i]();
     }
 }
 function nextTick(fn) {
@@ -1060,28 +1071,28 @@ function createApp(...args) {
 var runtimeDom = /*#__PURE__*/Object.freeze({
     __proto__: null,
     createApp: createApp,
-    h: h,
-    renderSlots: renderSlots,
-    createTextVNode: createTextVNode,
     createElementVNode: createVNode,
-    getCurrentInstance: getCurrentInstance,
-    registerRuntimeCompiler: registerRuntimeCompiler,
-    provide: provide,
-    inject: inject,
     createRender: createRender,
-    nextTick: nextTick,
-    toDisplayString: toDisplayString,
-    ref: ref,
-    proxyRefs: proxyRefs,
-    isRef: isRef,
-    unRef: unRef,
-    shallowReadonly: shallowReadonly,
+    createTextVNode: createTextVNode,
+    effect: effect,
+    getCurrentInstance: getCurrentInstance,
+    h: h,
+    inject: inject,
     isProxy: isProxy,
     isReactive: isReactive,
     isReadonly: isReadonly,
+    isRef: isRef,
+    nextTick: nextTick,
+    provide: provide,
+    proxyRefs: proxyRefs,
     reactive: reactive,
     readonly: readonly,
-    effect: effect
+    ref: ref,
+    registerRuntimeCompiler: registerRuntimeCompiler,
+    renderSlots: renderSlots,
+    shallowReadonly: shallowReadonly,
+    toDisplayString: toDisplayString,
+    unRef: unRef
 });
 
 const TO_DISPLAY_STRING = Symbol("toDisplayString");

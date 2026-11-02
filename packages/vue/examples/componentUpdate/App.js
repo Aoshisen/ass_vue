@@ -1,4 +1,4 @@
-import { h, ref, renderSlots } from "../../lib/ass-vue.esm.js";
+import { h, ref, renderSlots } from "../../dist/ass-vue.esm.js";
 
 import Child from "./Child.js";
 export const App = {

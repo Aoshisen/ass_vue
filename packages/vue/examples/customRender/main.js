@@ -1,36 +1,36 @@
-import { createRender } from "../../lib/ass-vue.esm.js";
+import { createRender } from "../../dist/ass-vue.esm.js";
 import { App } from "./App.js";
-console.log(PIXI);
 
-const game = new PIXI.Application({
-  width: 500,
-  height: 500,
-});
+(async () => {
+  const app = new PIXI.Application();
+  await app.init({ background: "#1099bb", width: 700, height: 700 })
 
-document.body.appendChild(game.view);
+  document.body.appendChild(app.canvas);
 
-const createElement = (type) => {
-  if (type === "rect") {
-    const rect = new PIXI.Graphics();
-    rect.beginFill(0xff0000);
-    rect.drawRect(0, 0, 100, 100);
-    rect.endFill();
-    return rect;
-  }
-};
 
-const patchProp = (el, key, val) => {
-  el[key] = val;
-};
+  const createElement = (type) => {
+    if (type === "rect") {
+      const rect = new PIXI.Graphics();
+      rect.beginFill(0xff0000);
+      rect.drawRect(0, 0, 100, 100);
+      rect.endFill();
+      return rect;
+    }
+  };
 
-const insert = (el, parent) => {
-  parent.addChild(el);
-};
+  const patchProp = (el, key, val) => {
+    el[key] = val;
+  };
 
-const renderer = createRender({
-  createElement,
-  patchProp,
-  insert,
-});
+  const insert = (el, parent) => {
+    parent.addChild(el);
+  };
 
-renderer.createApp(App).mount(game.stage);
+  const renderer = createRender({
+    createElement,
+    patchProp,
+    insert,
+  });
+
+  renderer.createApp(App).mount(app.stage);
+})()
