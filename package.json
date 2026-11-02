@@ -16,6 +16,7 @@
   },
   "scripts": {
     "test": "vitest",
-    "build": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript"
+    "build": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
+    "gen:examples": "node scripts/gen-examples-index.mjs"
   }
 }
