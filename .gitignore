@@ -1,2 +1,5 @@
 node_modules
+
+# 构建产物,不提交到仓库。GitHub Actions 会在部署时重新构建
+dist
 lib

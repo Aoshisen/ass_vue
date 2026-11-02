@@ -1,0 +1,56 @@
+name: Deploy examples to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm-lock.yaml 是 lockfileVersion 6.0,对应 pnpm 8
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run build
+
+      # 只发布 examples 和它依赖的 dist。两者保持相对位置不变,
+      # 这样 examples/x/index.html 里的 "../../dist/ass-vue.esm.js" 依然有效
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          cp -r packages/vue/examples _site/examples
+          cp -r packages/vue/dist _site/dist
+          touch _site/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
